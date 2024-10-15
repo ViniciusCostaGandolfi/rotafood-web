@@ -3,6 +3,7 @@ import createColormap from 'colormap';
 import { Merchant } from '../../../core/interfaces/merchant';
 import { Coordinate, Vrp, VrpRoute } from '../../../core/interfaces/vrp';
 import { LngLatLike } from 'maplibre-gl';
+import { getMidCoordinate } from '../../../core/helpers/get-mid-coordinate';
 
 
 @Component({
@@ -33,15 +34,14 @@ export class MapVrpComponent implements OnInit {
   }
 
   onRouteButtonClick(route: VrpRoute) {
-    this.selectedRoute = null;
-
-    setTimeout(() => {
+    if (route) {
       this.selectedRoute = route;
-      this.center = this.selectedRoute.routeLine[-1];
-    }, 0);
+      this.center = getMidCoordinate(this.selectedRoute.routeLine);
+    }
   }
 
-  private updateMap(vrp: Vrp | null): void {
+
+  updateMap(vrp: Vrp | null): void {
     this.showMap = false
     if (vrp) {
       setTimeout(() => {

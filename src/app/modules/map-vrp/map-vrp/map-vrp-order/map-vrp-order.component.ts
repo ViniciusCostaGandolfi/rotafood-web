@@ -15,7 +15,6 @@ marker: MarkerComponent|undefined;
   
   ngOnInit(): void {
     this.point = [this.order.address.longitude, this.order.address.latitude]
-    console.log(this.point)
   }
 
 

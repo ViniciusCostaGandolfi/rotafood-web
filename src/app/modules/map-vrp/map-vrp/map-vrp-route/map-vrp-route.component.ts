@@ -11,8 +11,6 @@ export class MapVrpRouteComponent implements OnInit {
     type: 'LineString',
     coordinates: [
       [-47.402459, -22.571489],
-      [-47.402459, -21.571489],
-      [-46.402459, -21.571489]
     ],
   };
 

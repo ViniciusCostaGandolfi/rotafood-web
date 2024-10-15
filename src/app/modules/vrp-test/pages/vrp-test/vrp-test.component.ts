@@ -12,6 +12,17 @@ export class VrpTestComponent {
     this.vrp = null
     if (vrpData != null) {
       this.vrp = vrpData
+
+      console.log(this.vrp)
     }
+  }
+
+  getTotalOrders(): number {
+    if (!this.vrp || !this.vrp.routes) {
+      return 0;
+    }
+    
+    return this.vrp.routes.reduce((total, route) => total + route.orders.length, 0);
+
   }
 }
