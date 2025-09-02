@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { VrpOrigin } from '../../../../core/interfaces/vrp';
+import { VrpOrigin } from '../../../../core/interfaces/vrp/vrp';
 
 @Component({
   selector: 'app-map-vrp-merchant',

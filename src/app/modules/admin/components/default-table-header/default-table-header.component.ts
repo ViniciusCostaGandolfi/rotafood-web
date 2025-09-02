@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ColumnConfig } from '../../../../core/interfaces/column-config';
+import { ColumnConfig } from '../../../../core/interfaces/catalog/column-config';
 
 @Component({
   selector: 'app-default-table-header',

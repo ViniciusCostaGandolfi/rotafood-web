@@ -4,6 +4,8 @@ import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from './shared/footer/footer.component';
 import { MapVrpModule } from './modules/map-vrp/map-vrp.module';
 import { HttpClientModule } from '@angular/common/http';
+import { GoogleMapsModule } from '@angular/google-maps';
+
 
 @Component({
   selector: 'app-root',
@@ -11,8 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     CommonModule, 
     RouterOutlet,
-    FooterComponent,
-    MapVrpModule,
+    GoogleMapsModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

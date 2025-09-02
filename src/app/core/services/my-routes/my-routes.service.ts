@@ -1,41 +1,29 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CurrentlyUserService } from '../currently-user/currently-user.service';
-import { MerchantUser, ModulePermission } from '../../interfaces/merchant-user';
+import { CurrentUserService } from '../current-user/current-user.service';
+import { MerchantUser } from '../../interfaces/merchant/merchant-user';
 import { allRoutes } from '../../mocks/admin-routes';
+import { AdminRoute } from '../../interfaces/shared/admin-route';
+import { MerchantUserRole } from '../../enums/merchant-user-role';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MyRoutesService {
-  private routesSubject = new BehaviorSubject<any[]>([]);
-  public routes$: Observable<any[]> = this.routesSubject.asObservable();
+  private readonly routesSubject = new BehaviorSubject<AdminRoute[]>([]);
+  public routes$: Observable<AdminRoute[]> = this.routesSubject.asObservable();
 
-  constructor(private currentUserService: CurrentlyUserService) {
+  constructor(private readonly currentUserService: CurrentUserService) {
     this.currentUserService.getUser().subscribe((user: MerchantUser | null) => {
-      if (user && user.permissions) {
-        const filteredRoutes = this.filterRoutesByPermissions(user.permissions);
+      if (user && user.role) {
+        const filteredRoutes = this.filterRoutesByRole(user.role);
         this.routesSubject.next(filteredRoutes);
       }
     });
   }
 
-  private filterRoutesByPermissions(permissions: string[]): any[] {
-    const orderedCategories = [
-      ModulePermission.CATALOG,
-      ModulePermission.ORDER,
-      ModulePermission.COMMAND,
-      ModulePermission.LOGISTIC,
-      ModulePermission.INTEGRATION,
-      ModulePermission.MERCHANT
-  ];
+  private filterRoutesByRole(role: MerchantUserRole): AdminRoute[] {
+    return allRoutes[role];
+}
 
-  const orderedPermissions = orderedCategories.filter(category => permissions.includes(category));
-
-  let orderedRoutes = orderedPermissions
-      .map(category => allRoutes[category])
-      .flat();
-
-  return orderedRoutes;
-  }
 }

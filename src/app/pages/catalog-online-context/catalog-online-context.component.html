@@ -1,0 +1,71 @@
+<ng-container *ngIf="isLoading; else showCatalog">
+    <div class="flex justify-center items-center h-[60vh]">
+        <mat-spinner diameter="50"></mat-spinner>
+    </div>
+</ng-container>
+<ng-template #showCatalog>
+    <app-catalog-online-layout [merchant]="merchant" [hasOpened]="hasOpened"
+        [showItemsButton]="catalogContext === 'DELIVERY'" #scrollContainer>
+        <div  class="!sticky !top-0 !z-50 !bg-white !w-[90vw] !overflow-x-auto"  >
+            <mat-button-toggle-group
+            [value]="selectedCategory"
+            appearance="standard"
+            >
+            <mat-button-toggle
+                *ngFor="let category of categories"
+                [value]="category.name"
+                (click)="scrollToCategory(category.name)"
+                class="!text-sm"
+            >
+                {{ category.name }}
+            </mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+        
+
+
+        <div *ngFor="let category of categories" [attr.id]="formatCategoryId(category.name)" class="h-full !bg-[#fdfdfd] pt-10 sm:px-5">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-5">{{ category.name }}</h2>
+
+            <div class="gap-4">
+                <ng-container *ngFor="let item of category.items">
+                    <mat-card *ngIf="isItemAvailable(item) === true"  (click)="addOrderItem(item)"
+                        class="!flex !flex-row sm:flex-row bg-white border border-gray-200 rounded-md p-2 gap-4 mb-4 hover:cursor-pointer hover:shadow transition-shadow">
+                        <div class="flex flex-col flex-1">
+                            <div class="font-bold text-base mb-1" [class.opacity-50]="!isItemAvailable(item)">
+                                {{ item.product.name }}
+                            </div>
+                            <div class="text-sm text-gray-600 truncate-3 flex-1">
+                                {{ item.product.description }}
+                            </div>
+    
+                            <div class="mt-2 text-sm text-start">
+                                <span class="font-bold text-gray-600 block">
+                                    <ng-container *ngIf="getPriceByContext(item.contextModifiers) === 0; else normalPrice">
+                                      a partir de R$ {{ getMinimumPrice(item) | number: '1.2-2' }}
+                                    </ng-container>
+                                    <ng-template #normalPrice>
+                                      R$ {{ getPriceByContext(item.contextModifiers) | number: '1.2-2' }}
+                                    </ng-template>
+                                  </span>
+                                                               
+                                <span *ngIf="hasDiscount(item.contextModifiers)" class="text-gray-400 line-through text-xs">
+                                    R$ {{ getOriginalPrice(item.contextModifiers) | number: '1.2-2' }}
+                                </span>
+                            </div>
+                        </div>
+    
+                        <div class="flex flex-col items-center justify-between w-28">
+                            <div class="w-24 h-24">
+                                <img [src]="item.product.imagePath || 'assets/images/placeholder.png'"
+                                    [alt]="item.product.name" class="w-full h-full object-cover rounded-md" />
+                            </div>
+                        </div>
+                    </mat-card>
+                </ng-container>
+
+
+            </div>
+        </div>
+    </app-catalog-online-layout>
+</ng-template>

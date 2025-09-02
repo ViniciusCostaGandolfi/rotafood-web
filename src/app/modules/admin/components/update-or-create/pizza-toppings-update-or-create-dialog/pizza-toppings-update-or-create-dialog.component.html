@@ -1,0 +1,95 @@
+<h1 mat-dialog-title>Adicionar Sabores</h1>
+
+<mat-dialog-content>
+  <mat-stepper [linear]="true" [selectedIndex]="currentStepIndex" #stepper>
+    <!-- Configurar Produto -->
+    <mat-step [stepControl]="productForm" label="Configurar Produto">
+      <form [formGroup]="productForm">
+        <div class="text-lg font-semibold mb-4">Detalhes</div>
+        <div class="flex flex-col sm:flex-row gap-5">
+          <div class="w-full sm:w-4/12 rounded-lg">
+            <app-image-selector [isLogo]="false" [imagePath]="productForm.controls.imagePath.value"
+              (onSelectedImageChange)="selctImage($event)"></app-image-selector>
+          </div>
+          <div class="w-full sm:w-8/12 ">
+            <mat-form-field class="!w-full">
+              <mat-label>Nome do Produto</mat-label>
+              <input matInput formControlName="name" placeholder="Nome do Produto" />
+              <mat-error *ngIf="productForm.get('name')?.invalid">O nome é obrigatório.</mat-error>
+            </mat-form-field>
+            <mat-form-field class="!w-full">
+              <mat-label>Descrição</mat-label>
+              <textarea rows="10" matInput class="w-full" formControlName="description"
+                placeholder="Descrição"></textarea>
+              <mat-hint>Máximo 1000 caracteres.</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Configurar Preços -->
+    <mat-step [stepControl]="optionForm" label="Configurar Preços">
+      <form [formGroup]="optionForm">
+        <div formArrayName="contextModifiers">
+          <div *ngFor="let size of sizes" class="border p-4 rounded mb-4">
+            <div class="text-xl font-bold mb-4">Tamanho: {{ size.product.name }}</div>
+            <div class="flex flex-col sm:flex-row gap-3 justify-around">
+              <div *ngFor="let cm of getContextModifierByParentOption(size)" [formGroup]="cm"
+                class="w-full border p-4 rounded shadow-sm">
+                <div class="text-lg font-semibold mb-4">
+                  Preço {{ catalogContextToString[cm.get('catalogContext')?.value] }}
+                </div>
+                <mat-checkbox formControlName="status">
+                  Ativar Item no Catálogo {{ catalogContextToString[cm.get('catalogContext')?.value] }}
+                </mat-checkbox>
+
+                <div formGroupName="price" class="flex flex-col gap-2">
+                  <mat-checkbox formControlName="hasDiscount">
+                    Tem desconto?
+                  </mat-checkbox>
+                  <div *ngIf="cm.get('price.hasDiscount')?.value">
+                    <mat-form-field class="w-full">
+                      <mat-label>Preço Original</mat-label>
+                      <input matInput type="text" appReplaceDotWithComma prefix="R$: " formControlName="originalValue"
+                        placeholder="Preço Original" />
+                    </mat-form-field>
+                  </div>
+                  <mat-form-field class="w-full">
+                    <mat-label>Preço {{cm.get('price.hasDiscount')?.value ? 'Final' : ''}}</mat-label>
+                    <input matInput type="text" appReplaceDotWithComma prefix="R$: " formControlName="value"
+                      placeholder="Preço" />
+                  </mat-form-field>
+                  <div class="px-5 flex items-center gap-2" *ngIf="cm.get('price.hasDiscount')?.value">
+                    <p class="text-lg font-bold text-green-600">
+                      {{ cm.get('price')?.get('value')?.value }}
+                    </p>
+                    <p class="text-sm text-gray-500 line-through">
+                      {{ cm.get('price')?.get('originalValue')?.value }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+  </mat-stepper>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="flex justify-between w-full">
+    <div class="flex">
+      <button mat-button *ngIf="!isFirstStep()" (click)="previousStep()">Voltar</button>
+      <button mat-button (click)="onCancel()">Cancelar</button>
+    </div>
+    <button mat-raised-button color="primary" *ngIf="isLastStep()" (click)="onSubmit()">
+      Salvar
+    </button>
+    <button mat-raised-button color="primary" *ngIf="!isLastStep()" (click)="nextStep()"
+      [disabled]="!isCurrentStepValid()">
+      Próximo
+    </button>
+  </div>
+</mat-dialog-actions>

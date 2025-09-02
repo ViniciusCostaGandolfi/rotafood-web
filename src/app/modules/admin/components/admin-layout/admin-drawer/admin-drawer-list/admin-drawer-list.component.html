@@ -1,15 +1,52 @@
-<mat-expansion-panel class="!bg-[#fdfdfd]" [class.mat-elevation-z0]="true">
-    <mat-expansion-panel-header>
-        <mat-icon>
-            {{adminRoute.icon}}
-        </mat-icon>
-        {{adminRoute.title}}
-    </mat-expansion-panel-header>
-    <mat-nav-list class="!flex !flex-col !justify-start">
-        <button (click)="onClick()" mat-button class="!my-1 !flex !flex-col !w-full !items-start" *ngFor="let item of adminRoute.items" [routerLink]="item.href">
-            <div class="flex flex-row w-full">
-                <mat-icon class="!mx-2">link</mat-icon> {{item.subtitle}}
-            </div>
+<ng-container *ngIf="adminRoute.items?.length; else singleRouteTemplate">
+    <mat-expansion-panel class="!bg-[#fdfdfd]" [class.mat-elevation-z0]="true" [expanded]="true">
+      <mat-expansion-panel-header>
+        <button           class="!my-2 !flex !items-center !justify-start !w-full"
+        mat-button>
+            <mat-icon>
+                {{ adminRoute.icon }}
+              </mat-icon>
+              {{ adminRoute.title }}
         </button>
-    </mat-nav-list>
-</mat-expansion-panel>
+      </mat-expansion-panel-header>
+      <mat-nav-list class="!flex !flex-col !justify-start">
+        <button
+          mat-button
+          class="!my-2 !flex !items-center !justify-start !w-full"
+          *ngFor="let item of adminRoute.items"
+          [routerLink]="item.href"
+          (click)="onClick()"
+        >
+          <div class="flex flex-row w-full">
+            <mat-icon class="!mx-2">link</mat-icon> {{ item.subtitle }}
+          </div>
+        </button>
+      </mat-nav-list>
+    </mat-expansion-panel>
+  </ng-container>
+  
+  <ng-template #singleRouteTemplate>
+    <button
+    *ngIf="!adminRoute.blank === true"
+      mat-button
+      class="!mx-4 !my-2 !flex !items-center !justify-start !w-full"
+      [routerLink]="adminRoute.href"
+      (click)="onClick()"
+    >
+      <mat-icon class="!mx-2">{{ adminRoute.icon }}</mat-icon>
+      {{ adminRoute.title }}
+    </button>
+    <a
+    *ngIf="adminRoute.blank === true"
+      mat-button
+      class="!mx-4 !my-2 !flex !items-center !justify-start !w-full"
+      [href]="adminRoute.href"
+      target="_blank"
+      rel="noopener"
+      (click)="onClick()"
+    >
+      <mat-icon class="!mx-2">{{ adminRoute.icon }}</mat-icon>
+      {{ adminRoute.title }}
+    </a>
+  </ng-template>
+  

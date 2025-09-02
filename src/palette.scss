@@ -4,22 +4,25 @@ $gray: mat.$gray-palette;
 
 $green: mat.$green-palette;
 
-/* For use in src/lib/core/theming/_palette.scss */
+$color-scale: (
+
+);
+
 $primary: (
-    50: #e6e6e8,   // Valores mais claros para tons menores
-    100: #c0c1c5,
-    200: #97999f,
-    300: #6e7179, 
-    400: #51535f,
-    500: #24243c,   // Cor primária
-    600: #212239,
-    700: #1d1e34,
-    800: #1a1a2f,
-    900: #141527,
-    A100: #5c5c80,  // Variações para cores de acentuação
-    A200: #24243c,
-    A400: #0c0c1e,
-    A700: #000005,
+    50: lighten(#0052c8ff, 50%),
+    100: lighten(#0052c8ff, 40%),
+    200: lighten(#0052c8ff, 30%),
+    300: lighten(#0052c8ff, 20%),
+    400: lighten(#0052c8ff, 10%),
+    500: #0052c8ff,
+    600: darken(#0052c8ff, 10%),
+    700: darken(#0052c8ff, 20%),
+    800: darken(#0052c8ff, 30%),
+    900: darken(#0052c8ff, 40%),
+    A100: mix(white, #0052c8ff, 60%),
+    A200: mix(white, #0052c8ff, 40%),
+    A400: mix(white, #0052c8ff, 20%),
+    A700: mix(black, #0052c8ff, 20%),
     contrast: (
         50: #000000,
         100: #000000,
@@ -38,21 +41,24 @@ $primary: (
     ),
 );
 
+// @debug $primary;
+
+
 $accent: (
-    50: #f4e8e3,   // Valores mais claros para tons menores
-    100: #e5c7b9,
-    200: #d5a38c,
-    300: #c57f5f,
-    400: #b9613c,
-    500: #bb7c4c,   // Cor secundária
-    600: #a86a39,
-    700: #945832,
-    800: #80452b,
-    900: #5d2e1b,
-    A100: #e5c7b9,  // Variações para cores de acentuação
-    A200: #bb7c4c,
-    A400: #945832,
-    A700: #5d2e1b,
+    50: lighten(#ff6600ff, 50%),
+    100: lighten(#ff6600ff, 40%),
+    200: lighten(#ff6600ff, 30%),
+    300: lighten(#ff6600ff, 20%),
+    400: lighten(#ff6600ff, 10%),
+    500: #ff6600ff,
+    600: darken(#ff6600ff, 10%),
+    700: darken(#ff6600ff, 20%),
+    800: darken(#ff6600ff, 30%),
+    900: darken(#ff6600ff, 40%),
+    A100: mix(white, #ff6600ff, 60%),
+    A200: mix(white, #ff6600ff, 40%),
+    A400: mix(white, #ff6600ff, 20%),
+    A700: mix(black, #ff6600ff, 20%),
     contrast: (
         50: #000000,
         100: #000000,
@@ -66,11 +72,10 @@ $accent: (
         900: #ffffff,
         A100: #000000,
         A200: #000000,
-        A400: #000000,
+        A400: #ffffff,
         A700: #ffffff,
     ),
 );
-
 $warn: (
     50: #ffebee,
     100: #ffcdd2,

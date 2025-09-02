@@ -1,0 +1,130 @@
+<app-catalog-online-layout [merchant]="merchant" [hasOpened]="hasOpened" [showItemsButton]="false">
+  <div class="h-full !bg-[#fdfdfd] pt-10 px-5">
+    <form [formGroup]="orderForm" *ngIf="orderItems.length >= 0; else noItems"
+      class="flex flex-col w-full p-4 h-full justify-between">
+      <h2 class="text-2xl font-bold text-primary-500 mb-4">Sacola</h2>
+
+      <div *ngFor="let item of orderItems; let i = index;" class="mb-3">
+        <mat-card class="p-4 flex flex-col gap-4">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-3">
+              <img *ngIf="item.item.imagePath" [src]="item.item.imagePath" alt="{{ item.item.name }}"
+                class="w-16 h-16 object-cover rounded">
+              <div>
+                <h3 class="font-bold text-lg">{{ item.item.name }}</h3>
+                <p class="text-gray-500">{{ item.quantity }}x • R$:{{ item.totalPrice |
+                  number:'1.2-2' }}</p>
+                <p *ngIf="item.options?.length" class="text-sm text-gray-400">
+                  <span *ngFor="let option of item.options">
+                    {{ option.option.name }} R$:(+{{ option.totalPrice | number:'1.2-2' }})
+                  </span>
+                </p>
+              </div>
+            </div>
+            <button mat-icon-button color="warn" (click)="removeItem(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <button mat-mini-fab color="warn" (click)="decreaseQuantity(i)">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="text-lg font-bold">{{ item.quantity }}</span>
+            <button mat-mini-fab color="primary" (click)="increaseQuantity(i)">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </mat-card>
+      </div>
+
+      <h3 class="text-lg font-semibold mb-2">Dados do Cliente</h3>
+
+      <div [formGroup]="orderForm.controls.customer">
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-label>Telefone</mat-label>
+          <input (ngModelChange)="onPhoneInputChange($event)" matInput formControlName="phone">
+          <mat-error *ngIf="orderForm.controls.customer.controls.phone.hasError('required')">
+            Voce esqueceu de colocar o telefone
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name">
+          <mat-error *ngIf="orderForm.controls.customer.controls.phone.hasError('required')">
+            Voce esqueceu de colocar o nome
+          </mat-error>
+        </mat-form-field>
+        <div class="my-4">
+          <h3 class="text-lg font-semibold mb-2">Selecione a Forma de Entrega</h3>
+          <mat-radio-group [formControl]="orderForm.controls.orderType" (change)="onOrderTypeChange()">
+            <mat-radio-button value="DELIVERY">Entrega</mat-radio-button>
+            <mat-radio-button value="TAKEOUT">Retirada no Local</mat-radio-button>
+          </mat-radio-group>
+          <button mat-raised-button class="w-full mt-4 py-3 !text-lg !font-bold" color="accent"
+            *ngIf="orderForm.get('orderType')?.value === 'DELIVERY'" (click)="selectAddress()">Escolha seu
+            Endereço</button>
+          <p *ngIf="getFormattedAddress()" class="text-gray-600 leading-snug my-3">
+            Entrega para: {{ getFormattedAddress() }}
+          </p>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-semibold mb-2">Forma de Pagamento</h3>
+      <mat-radio-group formControlName="paymentMethod">
+        <mat-radio-button value="CASH">Dinheiro</mat-radio-button>
+        <mat-radio-button value="CREDIT">Cartão de Crédito</mat-radio-button>
+        <mat-radio-button value="DEBIT">Cartão de Débito</mat-radio-button>
+        <mat-radio-button value="PIX">PIX</mat-radio-button>
+      </mat-radio-group>
+
+      <div *ngIf="getDeliveryFee() > 0" class="mt-4">
+        <h3 class="text-lg font-semibold mb-2">Taxas adicionais</h3>
+        <ul class="text-gray-700">
+          <li>
+            Taxa entrega: {{getDeliveryFee() | number:'1.2-2'}}
+          </li>
+        </ul>
+      </div>
+
+
+      <div class="border-t pt-4 mt-4 space-y-2 text-sm">
+
+        <div *ngFor="let it of orderItems" class="flex justify-between">
+          <span>{{ it.quantity }}x {{ it.item.name }}</span>
+          <span>R$: {{ it.totalPrice | number:'1.2-2' }}</span>
+        </div>
+
+        <div *ngIf="getDeliveryFee() > 0" class="flex justify-between">
+          <span>Taxa de entrega</span>
+          <span>R$: {{ getDeliveryFee() | number:'1.2-2' }}</span>
+        </div>
+
+        <div class="flex justify-between font-bold text-lg pt-2 border-t">
+          <span>Total:</span>
+          <span>R$:
+            {{ totalPrice | number:'1.2-2' }}
+          </span>
+        </div>
+      </div>
+
+      <button class="w-full mt-4 py-3 !text-lg !font-bold" mat-raised-button color="primary" (click)="submitOrder()">
+        Finalizar Pedido
+      </button>
+    </form>
+
+    <ng-template #noItems>
+      <div class="flex flex-col items-center justify-center h-full gap-4 text-center">
+        <p class="text-gray-500 text-lg">
+          Sua sacola está vazia 😔
+        </p>
+
+        <button mat-raised-button color="primary" [routerLink]="['/cardapios', merchant?.onlineName, '/entrega']">
+          Ir para o cardápio
+        </button>
+      </div>
+    </ng-template>
+
+  </div>
+</app-catalog-online-layout>

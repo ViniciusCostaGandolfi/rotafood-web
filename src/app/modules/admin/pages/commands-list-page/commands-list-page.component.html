@@ -1,0 +1,74 @@
+<div class="commands-container px-3 sm:px-10 md:px-20 pt-5 max-w-full overflow-auto">
+    <div class="flex justify-end mb-4">
+      <button mat-raised-button color="primary" (click)="updateOrCreateCommand()">
+        <mat-icon>add_circle</mat-icon> Nova Comanda
+      </button>
+    </div>
+  
+    <div *ngIf="isLoading" class="flex justify-center items-center h-[50vh]">
+      <mat-spinner></mat-spinner>
+    </div>
+
+  
+    <div *ngIf="!isLoading && commands.length === 0"
+         class="grid h-[60vh] place-content-center text-center text-gray-500">
+      <h2 class="uppercase tracking-widest mb-4">Nenhuma comanda aberta!</h2>
+    </div>
+  
+    <div *ngIf="!isLoading && commands.length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <mat-card *ngFor="let command of commands" class="p-4 max-h-[400px] overflow-y-auto shadow-md relative">
+        <mat-card-header>
+          <h1 class="font-bold text-xl text-primary-500 mb-2 flex justify-between items-center">
+            <div class="flex justify-center items-center">
+              <span>Comanda #{{ command.merchantSequence }}</span>
+              <button mat-icon-button color="primary" (click)="updateOrCreateCommand(command, false)">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
+          </h1>
+        </mat-card-header>
+  
+        <mat-card-content>
+          <span>Mesa: {{ command.tableIndex ?? 'Sem mesa' }}</span>
+          <p class="text-gray-700 mb-2">Nome: {{ command.name }}</p>
+  
+          <h2 class="font-semibold mb-2">Pedidos:</h2>
+          <div *ngIf="command.orders && command.orders.length > 0; else noOrders">
+            <ul class="list-disc pl-5 space-y-1">
+              <li *ngFor="let order of command.orders">
+                Pedido #{{ order.merchantSequence }} - Status: {{ orderStatusMap[order.status] }}
+                <ul class="ml-4 list-disc text-gray-600" *ngIf="order.items?.length">
+                  <li *ngFor="let item of order.items">
+                    {{ item.quantity }}x {{ item.item.name }} - R$ {{ item.totalPrice | number:'1.2-2' }}
+                    <ul class="ml-4 list-disc text-sm text-gray-500" *ngIf="item.options?.length">
+                      <li *ngFor="let opt of item.options">
+                        {{ opt.quantity }}x {{ opt.option.name }}
+                        <span *ngIf="opt.totalPrice"> - R$ {{ opt.totalPrice | number:'1.2-2' }}</span>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <ng-template #noOrders>
+            <p class="text-gray-500">Nenhum pedido cadastrado.</p>
+          </ng-template>
+  
+          <!-- <p class="text-gray-500">Subtotal: R$ {{ command.subtotal | number:'1.2-2' }}</p>
+          <p class="text-gray-500">Taxa de Serviço: R$ {{ command.serviceFee | number:'1.2-2' }}</p>
+          <p class="text-gray-500">Total: R$ {{ command.commandAmount | number:'1.2-2' }}</p> -->
+        </mat-card-content>
+  
+        <mat-card-actions>
+          <button mat-button (click)="updateOrCreateOrder(command)">
+            <mat-icon>add_circle</mat-icon> Pedido
+          </button>
+          <button mat-button (click)="updateOrCreateCommand(command, true)">
+            <mat-icon>money</mat-icon> Finalizar
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+  

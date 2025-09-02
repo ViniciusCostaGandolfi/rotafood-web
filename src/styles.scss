@@ -13,7 +13,7 @@
 // hue. Available color palettes: https://material.io/design/color/
 
 $app-primary: mat.define-palette(palette.$primary);
-$app-accent: mat.define-palette(palette.$accent, A200, A100, A400);
+$app-accent: mat.define-palette(palette.$accent);
 
 // The warn palette is optional (defaults to red).
 $app-warn: mat.define-palette(mat.$red-palette);
@@ -37,3 +37,46 @@ $rotafood-web-theme: mat.define-light-theme((
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #fdfdfd;
+  --mat-mdc-snack-bar-button-color: #24243c;
+  --mdc-snackbar-supporting-text-color: #24243c;
+}
+
+
+::ng-deep .mat-horizontal-content-container {
+  padding: 20px 10px 10px 10px !important;
+  height: 100% !important;
+}
+
+::ng-deep .mat-horizontal-stepper-content {
+  height: 100% !important;
+}
+
+::ng-deep .mat-horizontal-stepper-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100% !important;
+}
+
+::ng-deep .mat-mdc-dialog-content {
+  max-height: 100vh;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-start {
+  border-radius: 0 0 0 0;
+}
+
+
+::ng-deep .mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+  border-right-style: hidden;
+}
+
+::ng-deep .cdk-overlay-pane { max-width: 100vw !important; max-height: 100vh; }
+::ng-deep .cdk-overlay-pane .mat-dialog-container{
+  background-color:lightgreen;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+::ng-deep .cdk-overlay-pane .mat-dialog-container .mat-dialog-content { max-height: 100%; }

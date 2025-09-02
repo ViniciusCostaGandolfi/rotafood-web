@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -8,7 +8,8 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [
     MatDialogModule,
-    RouterModule
+    RouterModule,
+    MatButtonModule
   ],
   templateUrl: './can-delete-dialog.component.html',
   styleUrl: './can-delete-dialog.component.scss'

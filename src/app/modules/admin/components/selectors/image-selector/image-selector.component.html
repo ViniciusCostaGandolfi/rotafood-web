@@ -1,0 +1,45 @@
+<div class="flex flex-col sm:flex-row">
+  <div (click)="openImageDialog()" *ngIf="!imagePath" class="flex items-center justify-center w-full flex-col">
+    <label
+      for="dropzone-file"
+      class="flex flex-col items-center justify-center w-full h-auto pt-3 sm:h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50"
+    >
+      <div class="justify-center font-bold mb-2 text-center text-xl text-gray-800">
+        {{ imagePath ? 'Imagem Selecionada' : 'Clique para Selecionar' }}
+      </div>
+      <div class="flex flex-col items-center justify-center pt-5 pb-6">
+        <mat-icon class="text-gray-500" aria-hidden="true">
+          {{ imagePath ? 'check_circle' : 'cloud_upload' }}
+        </mat-icon>
+        <p class="mb-2 text-sm text-gray-500">
+          <span class="font-semibold">
+            {{ imagePath ? 'Imagem Selecionada' : 'Clique para escolher' }}
+          </span>
+        </p>
+        <p class="text-xs text-gray-500">PNG ou JPG (MAX. 4MB)</p>
+      </div>
+    </label>
+  </div>
+
+  <div class="flex flex-wrap justify-center relative w-full max-h-full" *ngIf="imagePath">
+    
+    <div class="relative inline-block w-full max-h-full">
+      <button
+        mat-icon-button
+        color="warn"
+        class="!z-10 !absolute !top-2 !right-2"
+        (click)="clearSelectedImage()"
+        aria-label="Remover seleção"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+      <div class="relative w-full pt-[100%] bg-white rounded-lg overflow-hidden">
+        <img
+          [src]="imagePath"
+          alt="Imagem Selecionada"
+          class="absolute top-0 left-0 w-full h-full object-contain"
+        />
+      </div>
+    </div>
+  </div>  
+</div>

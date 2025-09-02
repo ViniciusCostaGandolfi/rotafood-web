@@ -1,0 +1,11 @@
+::ng-deep .mat-horizontal-content-container {
+    padding: 20px 10px 10px 10px !important;
+    height: 100% !important;
+  }
+  
+  
+  ::ng-deep .mat-horizontal-stepper-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100% !important;
+  } 

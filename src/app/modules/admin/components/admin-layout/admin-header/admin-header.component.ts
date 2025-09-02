@@ -1,30 +1,39 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterModule } from '@angular/router';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { WindowWidthService } from '../../../../../core/services/window-width/window-width.service';
-import { MatNavList } from '@angular/material/list';
-import { AdminUserMenuComponent } from '../admin-user-menu/admin-user-menu.component';
+import { Component, OnInit } from '@angular/core';
+
 import { ShowAdminSideNavService } from '../../../../../core/services/show-admin-side-nav/show-admin-side-nav.service';
+import { WindowWidthService } from '../../../../../core/services/window-width/window-width.service';
+import { MerchantService } from '../../../../../core/services/merchant/merchant.service';
+import { FullMerchantDto } from '../../../../../core/interfaces/merchant/full-merchant';
 
 @Component({
   selector: 'app-admin-header',
   templateUrl: './admin-header.component.html',
-  styleUrl: './admin-header.component.scss'
+  styleUrls: ['./admin-header.component.scss']
 })
-export class AdminHeaderComponent {
+export class AdminHeaderComponent implements OnInit {
+  merchantOpen: boolean | null = null;
+  merchant: FullMerchantDto | null = null;
 
   constructor(
     public sideNavService: ShowAdminSideNavService,
-    public windowWidth: WindowWidthService
-    ) {}
+    public windowWidth: WindowWidthService,
+    private merchantService: MerchantService
+  ) {}
+
+  ngOnInit() {
+    this.merchantService.get().subscribe({
+      next: merchant => {
+        this.merchant = merchant;
+        const last = new Date(merchant.lastOpenedUtc).getTime();
+        this.merchantOpen = (Date.now() - last) < 30000;
+      },
+      error: err => console.error('Erro ao buscar status do merchant:', err)
+    });
+  }
+
+
+
   toggleSideNav() {
     this.sideNavService.toggleNav();
   }
-  
-
 }

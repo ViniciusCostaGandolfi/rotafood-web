@@ -1,0 +1,120 @@
+<mat-dialog-content class="space-y-4 !max-h-[90vh]">
+
+    <div class="flex w-full justify-between items-center">
+        <h2 class="text-2xl font-bold text-gray-500">
+            {{ data.item.product.name }}
+
+            R$ {{ getPriceValueByContext(data.item) | number:'1.2-2' }}
+        </h2>
+        <button matTooltip="Fechar" mat-icon-button mat-dialog-close>
+            <mat-icon> close </mat-icon>
+        </button>
+    </div>
+    <div *ngIf="isItemAvailable() === false" class="text-xs text-red-500 mt-2">
+        Indisponível
+    </div>
+    <p class="text-gray-500">
+        {{ data.item.product.description }}
+    </p>
+
+    <div class="w-full justify-center items-center flex">
+        <img *ngIf="data.item.product.imagePath" 
+            [src]="data.item.product.imagePath" 
+            alt="{{ data.item.product.name }}"
+            class="w-full max-w-80 h-auto object-cover rounded" />
+    </div>
+
+    <form [formGroup]="orderItemForm" *ngIf="data.item.optionGroups" class="space-y-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Observações</mat-label>
+        <textarea
+          matInput
+          formControlName="observations"
+          rows="3"
+          placeholder="Alguma observação sobre este item..."
+        ></textarea>
+      </mat-form-field>
+      
+        <ng-container *ngFor="let group of getOptionsFormArray().controls; let i = index">
+          <div class="p-4 space-y-4">
+            <div class="flex justify-between items-center">
+              <p class="font-bold text-lg" *ngIf="data.item.optionGroups[i].min === 1">
+                {{ group.get('groupName')?.value }}  (Obrigatório, máx: {{ data.item.optionGroups[i].max }})
+              </p>
+              <p *ngIf="data.item.optionGroups[i].min === 0" class="font-bold text-lg text-gray-500">
+                Você deseja adicionar {{ data.item.optionGroups[i].optionGroup.name }}? (máx: {{ data.item.optionGroups[i].max}})
+              </p>
+            </div>
+      
+            <ng-container *ngIf="data.item.optionGroups[i].min === 1 && data.item.optionGroups[i].max === 1">
+              <mat-radio-group class="flex flex-col gap-2" [formControl]="getSelectedOptionsFormControl(group)">
+                <ng-container *ngFor="let option of data.item.optionGroups[i].optionGroup.options">
+                  <mat-card class="!p-4 !flex !flex-row !justify-between !cursor-pointer"
+                            (click)="setSelectedOption(group, option)">
+                    <div class="h-40 flex flex-1 flex-col items-center justify-center">
+                      <mat-radio-button [value]="option" class="self-start">
+                        <p>{{ option.product.name }}</p>
+                        <p class="text-sm text-gray-500">
+                          + R$ {{ getPriceValueByContext(option) | number:'1.2-2' }}
+                        </p>
+                      </mat-radio-button>
+                    </div>
+                    <img *ngIf="option.product.imagePath" [src]="option.product.imagePath"
+                         alt="{{ option.product.name }}" class="w-40 h-40 object-cover rounded-lg" />
+                  </mat-card>
+                </ng-container>
+              </mat-radio-group>
+            </ng-container>
+      
+            <ng-container *ngIf="!(data.item.optionGroups[i].min === 1 && data.item.optionGroups[i].max === 1)">
+              <ng-container *ngFor="let option of data.item.optionGroups[i].optionGroup.options; let j = index">
+                <mat-card class="p-4 flex flex-col items-center gap-4">
+                  <div class="w-full">
+                    <div class="flex h-full flex-row justify-between">
+                      <div class="flex flex-col justify-between">
+                        <h3>{{ option.product.name }}</h3>
+                        <p class="text-gray-500">
+                          + R$ {{ getPriceValueByContext(option) | number:'1.2-2' }}
+                        </p>
+                        <div class="flex items-center gap-2">
+                          <button mat-mini-fab color="warn" 
+                                  (click)="decrementOption(group, j)"
+                                  [disabled]="getOptionFormGroup(group, j).value.quantity <= 0">
+                            <mat-icon>remove</mat-icon>
+                          </button>
+                          <span class="w-6 text-center">
+                            {{ getOptionFormGroup(group, j).value.quantity }}
+                          </span>
+                          <button mat-mini-fab color="primary"
+                                  (click)="incrementOption(group, j)"
+                                  [disabled]="isMaxReached(group)">
+                            <mat-icon>add</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                      <img *ngIf="option.product.imagePath"
+                           [src]="option.product.imagePath"
+                           alt="{{ option.product.name }}"
+                           class="w-auto h-40 object-cover rounded" />
+                    </div>
+                  </div>
+                </mat-card>
+              </ng-container>
+            </ng-container>
+          </div>
+        </ng-container>
+      </form>
+      
+      
+</mat-dialog-content>
+
+<mat-dialog-actions class="flex-shrink-0">
+    <div class="w-full text-right">
+        <div class="font-bold text-primary-500">
+            Preço total: R$ {{ calculateTotalPrice() | number:'1.2-2' }}
+        </div>
+    </div>
+    <button *ngIf="data.canAdd === true && isItemAvailable()" (click)="onSubmit()" mat-raised-button class="!w-full" color="primary">
+        Adicionar
+    </button>
+</mat-dialog-actions>

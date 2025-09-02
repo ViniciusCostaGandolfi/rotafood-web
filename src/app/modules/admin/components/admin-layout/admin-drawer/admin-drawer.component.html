@@ -1,22 +1,14 @@
 <mat-drawer-container class="!bg-[#fdfdfd]"    fullscreen >
     <mat-drawer class="!bg-[#fdfdfd]"   [mode]="isMobile ? 'over' : 'side' "   [opened]="showNav">
         <div class="flex flex-col">
-           <div >
-                <button mat-raised-button routerLink="/admin" class="!w-full !text-2xl !py-2 !h-full">
-                    <div>
-                        <mat-icon class="!text-2xl">home</mat-icon>
-                        Início
-                    </div>
-                </button>
-                
-           </div>
+            <app-admin-drawer-list [adminRoute]="homeRoute">
+            </app-admin-drawer-list>
             <ng-container *ngFor="let route of adminRoutes">
                 <app-admin-drawer-list [adminRoute]="route">
                 </app-admin-drawer-list>
             </ng-container>
         </div>
     </mat-drawer>
- 
     <ng-content>
 
     </ng-content>

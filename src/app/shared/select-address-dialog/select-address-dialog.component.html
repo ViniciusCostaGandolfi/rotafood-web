@@ -1,0 +1,44 @@
+
+<mat-dialog-content class="space-y-4 !max-h-[90vh]">
+    <h2 class="text-2xl font-bold text-gray-500 mb-5">Escolha seu endereço</h2>
+
+    <ng-container *ngIf="addresses.length; else addressFallback">
+
+        <div class="flex flex-col gap-2 items-end">
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Endereço do Cliente</mat-label>
+
+                <mat-select [(value)]="selectedAddress" (selectionChange)="patchAddressSelected($event.value)">
+                    <mat-option *ngFor="let addr of addresses" [value]="addr">
+                        {{ addr.formattedAddress }}
+                    </mat-option>
+
+                    <mat-option [value]="null">Adicionar novo endereço</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <app-address-autocomplete [address]="selectedAddress" (addressFound)="patchAddressSelected($event)">
+        </app-address-autocomplete>
+    </ng-container>
+
+
+    <ng-template #addressFallback>
+        <app-address-autocomplete mode="search" (addressFound)="patchAddressSelected($event)">
+        </app-address-autocomplete>
+    </ng-template>
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions >
+    <div class="!flex !flex-row !w-full">
+        <button [mat-dialog-close]="true" mat-raised-button class="!w-full"
+            color="accent">
+            Calcelar
+        </button>
+        <button (click)="onSubmit()" mat-raised-button class="!w-full"
+            color="primary">
+            Selecionar
+        </button>
+    </div>
+</mat-dialog-actions>

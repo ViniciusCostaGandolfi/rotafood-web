@@ -19,6 +19,11 @@
           "options": {
             "outputPath": "dist/rotafood-web",
             "index": "src/index.html",
+            "allowedCommonJsDependencies": [
+              "qrcode",
+              "colormap",
+              "maplibre-gl"
+            ],
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -27,21 +32,28 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
+              "src/favicon-16x16.png",
               "src/assets",
-              "src/robots.txt"
+              "src/robots.txt",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/styles.scss",
               "./node_modules/maplibre-gl/dist/maplibre-gl.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "server": "src/main.server.ts",
+            "prerender": true,
+            "ssr": {
+              "entry": "server.ts"
+            }
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
+                  "maximumWarning": "3mb",
                   "maximumError": "5mb"
                 },
                 {
@@ -95,8 +107,10 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
+              "src/favicon-16x16.png",
               "src/assets",
-              "src/_redirects"
+              "src/_redirects",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/styles.scss",
@@ -104,11 +118,23 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "036921ea-e649-4555-8ebd-65aef3f49cee"
+    "analytics": "036921ea-e649-4555-8ebd-65aef3f49cee",
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

@@ -2,34 +2,78 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component';
 import { AdminComponent } from './pages/admin.component';
-import { ProductCategoryListComponent } from './pages/product-category/product-category-list/product-category-list.component';
-import { ProductCategoryCreateComponent } from './pages/product-category/product-category-create/product-category-create.component';
-import { ProductCategoryEditComponent } from './pages/product-category/product-category-edit/product-category-edit.component';
-import { ProductListComponent } from './pages/product/product-list/product-list.component';
-import { ProductCreateComponent } from './pages/product/product-create/product-create.component';
-import { ProductEditComponent } from './pages/product/product-edit/product-edit.component';
+import { MerchantSettingsPageComponent } from './pages/merchant-settings-page/merchant-settings-page.component';
+import { OrdersListPageComponent } from './pages/orders-list-page/orders-list-page.component';
+import { CatalogsListPageComponent } from './pages/catalogs-list-page/catalogs-list-page.component';
+import { OrdersManagerPageComponent } from './pages/orders-manager-page/orders-manager-page.component';
+import { LogisticSettingsPageComponent } from './pages/logistic-settings-page/logistic-settings-page.component';
+import { WorkersPageComponent } from './pages/workers-page/workers-page.component';
+import { CommandsListPageComponent } from './pages/commands-list-page/commands-list-page.component';
+import { SubscriptionPageComponent } from './pages/subscription-page/subscription-page.component';
 
 const routes: Routes = [
   {
     path: '', 
     component: AdminLayoutComponent,
     children: [
-      {path: '', component: AdminComponent},
+      {
+        path: '', 
+        component: AdminComponent
+      },
 
       {
-        path: 'categorias', 
+        path: 'cardapios', 
         children: [
-          {path: '', component: ProductCategoryListComponent},
-          {path: 'novo', component: ProductCategoryCreateComponent},
-          {path: 'editar/:id', component: ProductCategoryEditComponent},
+          {
+            path: '', 
+            component: CatalogsListPageComponent
+          },
         ]
       },
+
       {
-        path: 'produtos', 
+        path: 'configuracoes/entrega',
+        component: LogisticSettingsPageComponent
+      },
+
+      {
+        path: 'funcionarios',
+        component: WorkersPageComponent
+      },
+
+      {
+        path: 'planos',
+        component: SubscriptionPageComponent
+      },
+
+      {
+        path: 'comandas',
+        component: CommandsListPageComponent
+      },
+
+
+      {
+        path: 'pedidos', 
         children: [
-          {path: '', component: ProductListComponent},
-          {path: 'novo', component: ProductCreateComponent},
-          {path: 'editar/:id', component: ProductEditComponent},
+          {
+            path: 'listar', 
+            component: OrdersListPageComponent
+          },
+
+          {
+            path: 'gestor',
+            component: OrdersManagerPageComponent
+          }
+        ]
+      },
+
+      {
+        path: 'configuracoes',
+        children: [
+          {
+            path: '',
+            component: MerchantSettingsPageComponent
+          }
         ]
       }
     ]

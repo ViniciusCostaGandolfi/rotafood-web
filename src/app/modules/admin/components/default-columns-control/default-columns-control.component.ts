@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ColumnConfig } from '../../../../core/interfaces/column-config';
+import { ColumnConfig } from '../../../../core/interfaces/catalog/column-config';
 
 @Component({
   selector: 'app-default-columns-control',

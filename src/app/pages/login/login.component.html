@@ -1,0 +1,49 @@
+<app-default-layout>
+    <div class="w-full flex flex-col items-center">
+        <div class="w-full sm:w-1/2">
+            <app-default-form-container>
+                <div class="flex flex-col w-full px-4 py-8 bg-white rounded-lg shadow sm:px-6 md:px-8 lg:px-10">
+                    <div class="flex flex-col justity-center text-center">
+                        <div class=" justify-center font-bold	 mb-2 text- text-xl text-gray-800 sm:text-2xl ">
+                            Bem Vindo de Volta!
+                        </div>
+                        <span class="justify-center text-sm text-center text-gray-500 flex-items-center ">
+                            Não tem uma conta ?
+                            <a routerLink="/register" class="text-sm text-primary-500 underline hover:text-primary-700">
+                                Regitre-se
+                            </a>
+                        </span>
+                    </div>
+                    <div class="mt-8">
+                        <form [formGroup]="form" autocomplete="on" (submit)="onSubmit()">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>E-mail </mat-label>
+                                <input class="w-full" matInput  type="email" formControlName="email" >
+                                <mat-error *ngIf="form.controls.email.hasError('required')">
+                                    Voce esqueceu de colocar um e-mail
+                                </mat-error>
+                                <mat-error *ngIf="form.controls.email.hasError('email')">
+                                    Coloque um email como seu_nome&#64;exemplo.com
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Senha</mat-label>
+                                <input class="w-full" matInput  type="password" formControlName="password" >
+                                <mat-error *ngIf="form.controls.password.hasError('required')">
+                                    Voce esqueceu de colocar sua senha!
+                                </mat-error>
+                            </mat-form-field> 
+                            <div class="flex flex-col items-center justify-center mt-6">
+                    
+                                <app-spinner-button  class="!w-full !text-xl"  [isLoading]="isLoading" [type]="'submit'">
+                                    Entrar
+                                </app-spinner-button>
+                            </div>
+                        </form>
+                    </div>
+                        
+                    </div>
+                </app-default-form-container>
+        </div>
+    </div>
+</app-default-layout>

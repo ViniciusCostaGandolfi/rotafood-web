@@ -1,0 +1,369 @@
+<div mat-dialog-title>
+  <div class="flex items-center justify-between">
+    <div class="font-bold text-xl text-gray-800 sm:text-2xl">
+      {{ data?.item?.id ? 'Editar Categoria Pizza: ' + data?.item?.product?.name : 'Categoria Pizza' }}
+    </div>
+    <button mat-icon-button (click)="onCancel()" mat-dialog-close aria-label="Fechar" class="ml-2">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<mat-dialog-content class="!max-h-[80vh]">
+  <mat-stepper [orientation]="isMobile ? 'vertical' : 'horizontal'" linear class="!h-full"
+    [selectedIndex]="currentStepIndex">
+
+    <mat-step [stepControl]="productForm" class="!h-full" label="Item">
+      <form [formGroup]="productForm" class="flex flex-col gap-4 w-full h-full justify-between">
+        <div class="text-lg font-semibold mb-4">Informações da Catagoria</div>
+
+        <mat-form-field class="!w-full">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" placeholder="Nome da categoria" />
+        </mat-form-field>
+        <div class="w-full flex items-center flex-col">
+          <div class="w-1/3">
+            <app-image-selector [imagePath]="productForm.controls.imagePath.value"
+              (onSelectedImageChange)="onItemImageChange($event)"></app-image-selector>
+          </div>
+        </div>
+
+      </form>
+    </mat-step>
+
+    <!-- Step 2: Tamanhos -->
+    <mat-step [stepControl]="sizesForm" label="Tamanhos">
+      <form [formGroup]="sizesForm" class="flex flex-col gap-4">
+        <div class="text-lg font-semibold mb-4">Tamanhos</div>
+        <button mat-raised-button color="primary" (click)="addSize()">Adicionar Tamanho</button>
+
+        <div formArrayName="options" class="space-y-4 mt-4">
+          <div *ngFor="let optCtrl of sizesForm.controls.options.controls; let i = index" [formGroupName]="i"
+            class="border p-4 rounded">
+
+            <div class="flex flex-col sm:flex-row gap-5">
+              <div formGroupName="product" class="w-full sm:w-1/4 max-h-full">
+                <app-image-selector [imagePath]="optCtrl.get('product.imagePath')?.value"
+                  (onSelectedImageChange)="onSizeImageChange(i, $event)"></app-image-selector>
+              </div>
+
+              <div class="w-full sm:w-3/4 flex flex-col gap-4">
+                <mat-form-field formGroupName="product" class="!w-full">
+                  <mat-label>Nome do Tamanho</mat-label>
+                  <input matInput formControlName="name" placeholder="Ex: Grande, Média, Pequena" />
+                </mat-form-field>
+                <mat-form-field formGroupName="product" class="!w-full">
+                  <mat-label>Quantidade de Pedaços</mat-label>
+                  <input matInput type="number" formControlName="quantity" placeholder="Ex: 8" />
+                </mat-form-field>
+                <div class="mt-4 flex flex-col justify-around">
+                  <mat-label>Frações (nº de sabores)</mat-label>
+                  <mat-button-toggle-group class="w-min" formControlName="fractions" multiple>
+                    <mat-button-toggle *ngFor="let value of [1, 2, 3, 4]"
+                      [checked]="optCtrl.get('fractions')?.value?.includes(value)" [value]="value">
+                      {{ value }}
+                    </mat-button-toggle>
+                  </mat-button-toggle-group>
+                </div>
+              </div>
+            </div>
+
+
+
+            <div class="flex justify-end mt-2">
+              <button mat-icon-button color="warn" (click)="removeSize(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+
+    <mat-step [stepControl]="crustsForm" label="Massas">
+      <form [formGroup]="crustsForm" class="flex flex-col gap-4">
+        <div class="text-lg font-semibold mb-4">Massas</div>
+        <button mat-raised-button color="primary" (click)="addCrust()">Adicionar Massa</button>
+
+        <div formArrayName="options" class="space-y-4 mt-4">
+          <div *ngFor="let mControl of crustsForm.controls.options.controls; let mi = index" [formGroupName]="mi"
+            class="border p-4 rounded">
+            <mat-form-field class="w-full" formGroupName="product">
+              <mat-label>Nome da Massa</mat-label>
+              <input matInput formControlName="name" placeholder="Ex: Tradicional, Integral" />
+            </mat-form-field>
+            <div>
+              <app-image-selector [imagePath]="mControl.get('product.imagePath')?.value"
+                (onSelectedImageChange)="onCrustImageChange(mi, $event)"></app-image-selector>
+            </div>
+
+            <div formArrayName="contextModifiers" class="flex flex-col sm:flex-row gap-3 mt-5  justify-around">
+              <div *ngFor="let cm of getCrustContextArray(mi).controls; let ci = index" 
+                [formGroupName]="ci"
+                [ngClass]="{
+                  'w-full': cm.get('catalogContext')?.value !== 'IFOOD'
+                }"
+                >
+                <div class="w-full flex-1" *ngIf="cm.get('catalogContext')?.value !== 'IFOOD'">
+                  <div class="text-lg font-semibold mb-4">
+                    Preço {{ getCatalogContextToString(cm.get('catalogContext')?.value) }}
+                  </div>
+                  <mat-checkbox formControlName="status">
+                    Ativar Item no Catálogo {{ getCatalogContextToString(cm.get('catalogContext')?.value) }}
+                  </mat-checkbox>
+                  <div formGroupName="price" class="flex flex-col gap-2">
+                    <mat-checkbox formControlName="hasDiscount">
+                      Tem desconto?
+                    </mat-checkbox>
+                    <div *ngIf="cm.get('price.hasDiscount')?.value">
+                      <mat-form-field class="w-full">
+                        <mat-label>Preço Original</mat-label>
+                        <input matInput type="text" appReplaceDotWithComma prefix="R$: " formControlName="originalValue"
+                          placeholder="Preço Original" />
+                      </mat-form-field>
+                    </div>
+                    <mat-form-field class="w-full">
+                      <mat-label>Preço {{cm.get('price.hasDiscount')?.value ? 'Final' : ''}}</mat-label>
+                      <input matInput type="text" appReplaceDotWithComma prefix="R$: " formControlName="value"
+                        placeholder="Preço" />
+                    </mat-form-field>
+                    <div class="px-5 flex items-center gap-2" *ngIf="cm.get('price.hasDiscount')?.value">
+                      <p class="text-lg font-bold text-green-600">
+                        {{ cm.get('price')?.get('value')?.value }}
+                      </p>
+                      <p class="text-sm text-gray-500 line-through">
+                        {{ cm.get('price')?.get('originalValue')?.value }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="flex justify-end mt-2">
+              <button mat-icon-button color="warn" (click)="removeCrust(mi)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+
+    <mat-step [stepControl]="edgesForm" label="Bordas">
+      <form [formGroup]="edgesForm" class="flex flex-col gap-4">
+        <div class="text-lg font-semibold mb-4">Bordas</div>
+        <button mat-raised-button color="primary" (click)="addEdge()">Adicionar Borda</button>
+
+        <div formArrayName="options" class="space-y-4 mt-4">
+          <div *ngFor="let bControl of edgesForm.controls.options.controls; let bi = index" [formGroupName]="bi"
+            class="border p-4 rounded">
+            <mat-form-field class="w-full" formGroupName="product">
+              <mat-label>Nome da Borda</mat-label>
+              <input matInput formControlName="name" placeholder="Ex: Catupiry, Cheddar" />
+            </mat-form-field>
+
+            <div>
+              <app-image-selector [imagePath]="bControl.get('product.imagePath')?.value"
+                (onSelectedImageChange)="onEdgeImageChange(bi, $event)"></app-image-selector>
+            </div>
+
+            <div formArrayName="contextModifiers" class="flex flex-col sm:flex-row gap-3 mt-5  justify-around">
+              <div *ngFor="let cm of getEdgeContextArray(bi).controls; let ci = index" 
+                [formGroupName]="ci"
+                [ngClass]="{
+                  'w-full': cm.get('catalogContext')?.value !== 'IFOOD'
+                }"
+                >
+                <div class="w-full flex-1" *ngIf="cm.get('catalogContext')?.value !== 'IFOOD'">
+                  <div class="text-lg font-semibold mb-4">
+                    Preço {{ getCatalogContextToString(cm.get('catalogContext')?.value) }}
+                  </div>
+                  <mat-checkbox formControlName="status">
+                    Ativar Item no Catálogo {{ getCatalogContextToString(cm.get('catalogContext')?.value) }}
+                  </mat-checkbox>
+                  <div formGroupName="price" class="flex flex-col gap-2">
+                    <mat-checkbox formControlName="hasDiscount">
+                      Tem desconto?
+                    </mat-checkbox>
+                    <div *ngIf="cm.get('price.hasDiscount')?.value">
+                      <mat-form-field class="w-full">
+                        <mat-label>Preço Original</mat-label>
+                        <input matInput type="text" appReplaceDotWithComma prefix="R$: " formControlName="originalValue"
+                          placeholder="Preço Original" />
+                      </mat-form-field>
+                    </div>
+                    <mat-form-field class="w-full">
+                      <mat-label>Preço {{cm.get('price.hasDiscount')?.value ? 'Final' : ''}}</mat-label>
+                      <input matInput type="text" appReplaceDotWithComma prefix="R$: " formControlName="value"
+                        placeholder="Preço" />
+                    </mat-form-field>
+                    <div class="px-5 flex items-center gap-2" *ngIf="cm.get('price.hasDiscount')?.value">
+                      <p class="text-lg font-bold text-green-600">
+                        {{ cm.get('price')?.get('value')?.value }}
+                      </p>
+                      <p class="text-sm text-gray-500 line-through">
+                        {{ cm.get('price')?.get('originalValue')?.value }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end mt-2">
+              <button mat-icon-button color="warn" (click)="removeEdge(bi)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+
+    <mat-step [stepControl]="packagingsForm" label="Embalagens">
+      <div class="w-full">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-lg font-semibold">Configuração de Embalagens</div>
+          <button mat-raised-button color="primary" *ngIf="packagingsForm.get('packagingType')?.value === 'PACKAGING'"
+            (click)="createPackagingDialog()">
+            Adicionar Nova Embalagem
+          </button>
+        </div>
+        <form [formGroup]="packagingsForm">
+          <div class="mt-4">
+            <div class="font-semibold mb-2 block">Como entrega no delivery?</div>
+            <mat-radio-group formControlName="packagingType" class="flex flex-col space-y-2">
+              <mat-radio-button *ngFor="let option of packagingTypeOptions" [value]="option">
+                {{ packagingTypeToString[option] }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+          
+
+          <div *ngIf="packagingsForm.get('packagingType')?.value === 'PACKAGING'" [formGroup]="productPackagingForm" class="space-y-4 mt-4">
+            <div class="border p-4 rounded shadow-sm flex flex-col items-center">
+              <ng-container *ngIf="!packagingsForm.get('productPackaging.packaging')?.value; else packagingDetails">
+                <div class="w-full flex">
+                  <mat-form-field class="w-full">
+                    <mat-label>Selecionar Embalagem</mat-label>
+                    <mat-select formControlName="packaging" (selectionChange)="onPackagingSelected(productPackagingForm, $event.value)">
+                      <mat-option *ngFor="let option of packagingOptions" [value]="option">
+                        <div class="font-semibold">{{ option.name }}</div>
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="packagingsForm.get('productPackaging.packaging')?.hasError('required')">
+                      O campo é obrigatório.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </ng-container>
+    
+              <ng-template #packagingDetails>
+                <div class="w-full">
+                  <mat-card class="example-card shadow-md mb-4" appearance="outlined">
+                    <mat-card-header>
+                      <mat-card-title-group>
+                        <img mat-card-xl-image
+                          [src]="packagingsForm.get('productPackaging.packaging')?.value?.imagePath || 'assets/images/placeholder.png'"
+                          alt="Imagem da embalagem" />
+                        <mat-card-title class="!w-full">
+                          <div class="flex justify-between items-center w-full">
+                            {{ packagingsForm.get('productPackaging.packaging')?.value?.name }}
+                          </div>
+                        </mat-card-title>
+                        <mat-card-subtitle>
+                          Comprimento {{ packagingsForm.get('productPackaging.packaging')?.value?.lenghtCm }}cm
+                        </mat-card-subtitle>
+                        <mat-card-subtitle>
+                          Largura {{ packagingsForm.get('productPackaging.packaging')?.value?.widthCm }}cm
+                        </mat-card-subtitle>
+                        <mat-card-subtitle>
+                          Espessura {{ packagingsForm.get('productPackaging.packaging')?.value?.thicknessCm }}cm
+                        </mat-card-subtitle>
+                      </mat-card-title-group>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <mat-form-field class="mt-5 w-full">
+                        <mat-label>Quantidade por Pacote</mat-label>
+                        <input min="1" matInput type="number" formControlName="quantityPerPackage" />
+                        <mat-error *ngIf="packagingsForm.get('productPackaging.quantityPerPackage')?.hasError('required')">
+                          A quantidade é obrigatória.
+                        </mat-error>
+                      </mat-form-field>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+    
+          <mat-error *ngIf="packagingsForm.hasError('productPackagingsRequired') && !packagingsForm.get('useSideBag')?.value">
+            É necessário configurar as embalagens quando "Usar bolso lateral" está desativado.
+          </mat-error>
+        </form>
+      </div>
+    </mat-step>
+    
+
+    <mat-step label="Disponibilidade">
+      <div class="text-lg font-semibold mt-8 mb-4">Disponibilidade</div>
+      <form [formGroup]="availabilityForm" class="flex flex-col gap-4">
+        <mat-checkbox [checked]="availabilityForm.get('alwaysAvailable')?.value === true"
+          formControlName="alwaysAvailable">Sempre Disponível</mat-checkbox>
+        <div formArrayName="shifts" *ngIf="availabilityForm.get('alwaysAvailable')?.value === false"
+          class="flex flex-col gap-4">
+          <div *ngFor="let shift of shiftsForm.controls; let i = index" [formGroupName]="i"
+            class="border p-4 rounded shadow">
+            <div class="flex gap-4">
+              <mat-form-field class="w-full">
+                <mat-label>Início</mat-label>
+                <mat-select formControlName="startTime">
+                  <mat-option *ngFor="let time of timeOptions" [value]="time">{{ time }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field class="w-full">
+                <mat-label>Fim</mat-label>
+                <mat-select formControlName="endTime">
+                  <mat-option *ngFor="let time of timeOptions" [value]="time">{{ time }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="text-md font-semibold mt-4">Dias da Semana</div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <mat-checkbox formControlName="monday">Segunda-feira</mat-checkbox>
+              <mat-checkbox formControlName="tuesday">Terça-feira</mat-checkbox>
+              <mat-checkbox formControlName="wednesday">Quarta-feira</mat-checkbox>
+              <mat-checkbox formControlName="thursday">Quinta-feira</mat-checkbox>
+              <mat-checkbox formControlName="friday">Sexta-feira</mat-checkbox>
+              <mat-checkbox formControlName="saturday">Sábado</mat-checkbox>
+              <mat-checkbox formControlName="sunday">Domingo</mat-checkbox>
+            </div>
+          </div>
+          <button mat-button color="primary" (click)="addShift()">Adicionar Turno</button>
+        </div>
+      </form>
+    </mat-step>
+
+  </mat-stepper>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="flex justify-between w-full">
+    <div class="flex">
+      <button mat-button *ngIf="!isFirstStep()" (click)="previousStep()"> Voltar </button>
+      <button mat-button (click)="onCancel()">Cancelar</button>
+    </div>
+    <button *ngIf="isLastStep()" mat-raised-button color="primary" (click)="onSubmit()">Salvar</button>
+    <button mat-raised-button color="primary" *ngIf="!isLastStep()" (click)="nextStep()"
+      [disabled]="!isCurrentStepValid()">
+      Próximo
+    </button>
+  </div>
+</mat-dialog-actions>

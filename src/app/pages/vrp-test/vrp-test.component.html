@@ -1,0 +1,10 @@
+<app-default-layout>
+    <div class=" flex flex-col items-center">
+        <div class="w-10/12 py-5">
+            <app-vrp-test-form (cvrp)="handleVrpData($event)"></app-vrp-test-form>
+        </div>
+        <ng-container *ngIf="vrp">
+            <app-map-vrp [vrp]="vrp"/>
+        </ng-container>
+    </div>
+</app-default-layout>

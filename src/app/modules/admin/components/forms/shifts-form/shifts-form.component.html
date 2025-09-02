@@ -1,0 +1,68 @@
+<form [formGroup]="form" class="flex flex-col gap-4">
+    <p class="text-lg font-semibold mb-4">Disponibilidade</p>
+  
+    <mat-checkbox formControlName="alwaysAvailable" (change)="onChangeAlwaysAvailable($event)">
+      Sempre Disponível
+    </mat-checkbox>
+  
+    <ng-container *ngIf="!form.get('alwaysAvailable')?.value">
+      <div formArrayName="shifts" class="flex flex-col gap-4">
+        <div
+          *ngFor="let shift of shiftsArray.controls; let i = index"
+          [formGroupName]="i"
+          class="border p-4 rounded shadow"
+        >
+          <div class="flex gap-4">
+            <mat-form-field class="w-full">
+              <mat-label>Início</mat-label>
+              <mat-select formControlName="startTime">
+                <mat-option
+                  *ngFor="let t of timeOptions"
+                  [value]="t"
+                >
+                  {{ t }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+  
+            <mat-form-field class="w-full">
+              <mat-label>Fim</mat-label>
+              <mat-select formControlName="endTime">
+                <mat-option
+                  *ngFor="let t of timeOptions"
+                  [value]="t"
+                >
+                  {{ t }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+  
+          <!-- Dias da semana -->
+          <p class="text-md font-semibold mt-4">Dias da Semana</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <mat-checkbox formControlName="monday">Segunda-feira</mat-checkbox>
+            <mat-checkbox formControlName="tuesday">Terça-feira</mat-checkbox>
+            <mat-checkbox formControlName="wednesday">Quarta-feira</mat-checkbox>
+            <mat-checkbox formControlName="thursday">Quinta-feira</mat-checkbox>
+            <mat-checkbox formControlName="friday">Sexta-feira</mat-checkbox>
+            <mat-checkbox formControlName="saturday">Sábado</mat-checkbox>
+            <mat-checkbox formControlName="sunday">Domingo</mat-checkbox>
+          </div>
+  
+          <!-- Remover -->
+          <div class="flex justify-end mt-4">
+            <button mat-icon-button color="warn" type="button" (click)="removeShift(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+  
+        <!-- Adicionar -->
+        <button mat-button color="primary" type="button" (click)="addShift()">
+          Adicionar Turno
+        </button>
+      </div>
+    </ng-container>
+  </form>
+  

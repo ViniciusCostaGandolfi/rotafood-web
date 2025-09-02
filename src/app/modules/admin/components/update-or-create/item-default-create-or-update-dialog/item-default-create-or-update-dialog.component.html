@@ -1,0 +1,102 @@
+<div mat-dialog-title>
+  <div class="flex items-center justify-between">
+    <div class="font-bold text-xl text-gray-800 sm:text-2xl">
+      {{ data?.item?.id ? 'Editar Item ' + data?.item?.product?.name : 'Criar Item' }}
+    </div>
+    <button mat-icon-button (click)="onCancel()" mat-dialog-close aria-label="Fechar" class="ml-2">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<mat-dialog-content class="!max-h-[80vh]">
+
+  <mat-stepper [orientation]="isMobile ? 'horizontal' : 'horizontal'" linear class="!h-full">
+    <mat-step [stepControl]="detailsForm" class="!h-full" [label]="isMobile ? '' : 'Detalhes'">
+      <form [formGroup]="detailsForm" class="flex flex-col gap-4 w-full h-full justify-between">
+        <div class="text-lg font-semibold mb-4">Detalhes</div>
+
+        <div class="flex flex-col sm:flex-row gap-5">
+          <div class="w-full sm:w-1/5 max-h-full">
+            <app-image-selector [isLogo]="false" [imagePath]="data.item?.product?.imagePath"
+              (onSelectedImageChange)="selctImage($event)"></app-image-selector>
+          </div>
+          <div class="w-full sm:w-4/5">
+            <mat-form-field appearance="outline" class="!w-full">
+              <mat-label>Nome do Produto</mat-label>
+              <input matInput formControlName="name" placeholder="Nome do Produto" />
+              <mat-error *ngIf="detailsForm.get('name')?.invalid">O nome é obrigatório.</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="!w-full h-3/4">
+              <mat-label>Descrição</mat-label>
+              <textarea matInput formControlName="description" rows="9" placeholder="Descrição"></textarea>
+              <mat-hint>Máximo 1000 caracteres.</mat-hint>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <div class="text-lg font-semibold mt-5 mb-2">Serve quantas pessoas?</div>
+        <mat-radio-group formControlName="serving">
+          <mat-radio-button *ngFor="let option of servingOptions" [value]="option">
+            {{ servingToString[option] }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </form>
+    </mat-step>
+
+
+    <mat-step class="justify-between flex flex-col" [label]="isMobile ? '' : 'Preços'">
+      <div class="text-xl font-semibold mb-4">Preços do seu Item</div>
+      <p>Gerencie os preços do item conforme os contextos abaixo:</p>
+
+      <app-context-modifiers-form [initialModifiers]="data.item?.contextModifiers ?? null" (valueChange)="contextModifiers = $event"></app-context-modifiers-form>
+    </mat-step>
+
+
+
+    <mat-step [label]="isMobile ? '' : 'Complementos'" >
+      <div class="w-full">
+        <div class="flex justify-between items-center mb-4">
+          <div class="text-lg font-semibold">Configuração de Complementos</div>
+        </div>
+
+        <app-option-groups-form (valueChange)="itemOptionGroups = $event" [initialItemGroups]="data.item?.optionGroups ?? null" >
+          
+        </app-option-groups-form>
+
+      </div>
+    </mat-step>
+
+    <mat-step [label]="isMobile ? '' : 'Embalagens'" >
+      <app-packagings-form
+        [initial]="packagingConfig"
+        (valueChange)="packagingConfig = $event"
+      ></app-packagings-form>
+    </mat-step>
+
+
+    <mat-step  [label]="isMobile ? '' : 'Detalhes'">
+      <app-shifts-form
+        [shifts]="data.item?.shifts"
+        (valueChange)="itemShifts = $event"
+      ></app-shifts-form>
+    </mat-step>
+
+  </mat-stepper>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex justify-between w-full">
+    <div class="flex">
+      <button mat-button *ngIf="!isFirstStep()" (click)="previousStep()"> Voltar </button>
+      <button mat-button (click)="onCancel()">Cancelar</button>
+    </div>
+
+
+
+    <app-spinner-button *ngIf="isLastStep()" mat-raised-button color="primary" (click)="onSubmit()" [isLoading]="isLoading">Salvar</app-spinner-button>
+    <button mat-raised-button color="primary" *ngIf="!isLastStep()" (click)="nextStep()"
+      [disabled]="!isCurrentStepValid()">
+      Próximo
+    </button>
+  </div>
+</mat-dialog-actions>

@@ -1,0 +1,108 @@
+<div mat-dialog-title>
+    <div class="flex justify-between items-center">
+      <h2>Gerenciar Imagens</h2>
+      <button mat-icon-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+  
+  <mat-dialog-content class="flex-1 overflow-auto !max-h-[100vh]">
+    <mat-tab-group class="h-full">
+      <mat-tab label="Novo Arquivo">
+        <div class="flex flex-col items-center w-full">
+          <label
+            (dragover)="onDragOver($event)"
+            (drop)="onFileDropped($event)"
+            for="file-upload"
+            class="flex flex-col items-center justify-center w-full mt-10 h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+          >
+            <div class="text-center">
+              <mat-icon class="text-gray-500">
+                {{ previewUrl ? 'check_circle' : 'cloud_upload' }}
+              </mat-icon>
+              <p class="font-semibold text-gray-800 text-lg">
+                {{ previewUrl ? 'Imagem Selecionada' : 'Clique para Selecionar ou Arraste Aqui' }}
+              </p>
+              <p class="text-sm text-gray-500 mt-1">Aceitamos apenas PNG ou JPG</p>
+            </div>
+            <input
+              id="file-upload"
+              type="file"
+              accept="image/png, image/jpeg"
+              (change)="onFileSelected($event)"
+              hidden
+            />
+          </label>
+  
+          <div class="mt-4 w-full flex justify-center" *ngIf="previewUrl">
+            <img
+              [src]="previewUrl"
+              alt="Imagem carregada"
+              class="w-auto h-[40vh] border-2 border-blue-500 rounded-lg shadow-md"
+            />
+          </div>
+        </div>
+      </mat-tab>
+  
+      <mat-tab label="Biblioteca">
+        <div class="library-container grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <ng-container *ngIf="images && images.length > 0; else noImages">
+            <ng-container *ngFor="let image of images">
+              <mat-card
+                [ngClass]="{
+                  '!border-primary-500 !border-4 !rounded-lg !shadow-md': image === selectedImage,
+                  '!border-gray-300 !border-2 !rounded-md': image !== selectedImage
+                }"
+              >
+                <div mat-card-image class="relative w-full pt-[100%] bg-white rounded-lg overflow-hidden">
+                  <img
+                    [src]="image.path"
+                    alt="Imagem Selecionada"
+                    class="absolute top-0 left-0 w-full h-full object-contain"
+                  />
+                </div>
+  
+                <mat-card-actions>
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="deleteImage(image); $event.stopPropagation()"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <button
+                    (click)="onSelectImage(image)"
+                    mat-raised-button
+                    color="primary"
+                  >
+                    Selecionar
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </ng-container>
+          </ng-container>
+  
+          <ng-template #noImages>
+            <p class="no-images-text">Nenhuma imagem encontrada.</p>
+          </ng-template>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-dialog-content>
+  
+  
+  <mat-dialog-actions>
+    <div class="flex justify-between w-full">
+        <button mat-button mat-dialog-close>Cancelar</button>
+        <app-spinner-button *ngIf="selectedFile" 
+        mat-raised-button 
+        color="primary" 
+        [isLoading]="isLoading" 
+        (click)="uploadImage()"> Salvar </app-spinner-button>
+
+
+        <button *ngIf="selectedImage" mat-raised-button color="primary" (click)="onSave()">Selecionar</button>
+    </div>
+  </mat-dialog-actions>
+  

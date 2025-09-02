@@ -1,0 +1,63 @@
+<app-catalog-online-layout [showItemsButton]="false" [hasOpened]="true">
+    <div class="flex justify-center items-start min-h-screen p-4">
+        <div class="w-full max-w-2xl">
+            <mat-card class="p-6 shadow-lg text-center mb-6">
+                <mat-card-title class="text-xl font-bold">Status do Pedido</mat-card-title>
+                <mat-card-content>
+                    <div *ngIf="loading" class="flex justify-center">
+                        <mat-spinner diameter="50"></mat-spinner>
+                    </div>
+
+                    <div *ngIf="!loading && order">
+                        <p class="text-lg font-semibold">Pedido #{{ order.id }}</p>
+                        <p>Status:
+                            <span class="font-bold" [ngClass]="getStatusClass(order.status)">
+                                {{ orderStatusMap[order.status] }}
+                            </span>
+                        </p>
+                        <p class="text-sm ">Criado em: {{ order.createdAt | date:'short' }}</p>
+                        <p class="mt-4 font-bold text-lg text-primary-500">Total: R$ {{ order.total.orderAmount |
+                            number:'1.2-2' }}</p>
+                    </div>
+
+                    <h3 class="text-start text-2xl font-semibold mb-3 mt-20">Itens do Pedido</h3>
+                    <div *ngFor="let item of order?.items" class="!mb-5 sm:flex-row items-center">
+                        <div class="!w-full">
+                            <div class="w-full flex">
+                                <div class="w-full items-start">
+                                    <h3 class="!text-xl !font-bold">({{ item.quantity }}) {{ item.item.name }}</h3>
+                                </div>
+
+                                <img mat-card-image [src]="item.item.imagePath || 'assets/images/placeholder.png'"
+                                    alt="{{ item.item.name }}" class="w-28 h-28 object-cover rounded-lg" />
+                            </div>
+                        </div>
+
+                        <div class="w-full">
+                            <div *ngIf="item.options">
+                                <div *ngFor="let option of item.options" class="flex items-center">
+                                    <div *ngIf="option.groupName" class="text-primary-600 font-bold mt-2">
+                                        {{ option.groupName }}
+                                    </div>
+                                    <img mat-card-image [src]="option.option.imagePath || 'assets/images/placeholder.png'"
+                                        alt="{{ item.item.name }}" class="w-20 h-20 object-cover rounded-lg" />
+                                    <div class="ml-10">
+                                        <div class="text-gray-500 font-bold"> {{option.quantity}}x
+                                            {{option.option.name}}</div>
+                                        <div class="text-gray-500">R$: {{option.totalPrice | number:'1.2-2'}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-lg font-semibold ">
+                                R$: {{ item.totalPrice | number:'1.2-2' }}
+                            </p>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Itens do Pedido -->
+
+        </div>
+    </div>
+</app-catalog-online-layout>

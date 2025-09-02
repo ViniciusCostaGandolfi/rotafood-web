@@ -1,0 +1,14 @@
+::ng-deep .mat-horizontal-content-container {
+    padding: 20px 10px 10px 10px !important;
+    max-height: 80vh !important;
+  }
+  
+  
+::ng-deep .mat-horizontal-stepper-wrapper {
+  display: flex;
+  flex-direction: column;
+} 
+
+::ng-deep .mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+    border-right-style: hidden;
+  }

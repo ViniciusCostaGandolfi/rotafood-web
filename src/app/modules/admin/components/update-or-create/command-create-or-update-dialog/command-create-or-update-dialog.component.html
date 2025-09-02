@@ -1,0 +1,114 @@
+<h1 mat-dialog-title>{{ data?.command ? 'Editar Comanda' : 'Nova Comanda' }}</h1>
+
+<mat-dialog-content class="!max-h-[90vh]">
+  <form [formGroup]="commandForm" class="flex flex-col gap-4">
+    <mat-form-field class="w-full">
+      <mat-label>Nome da Comanda</mat-label>
+      <input matInput placeholder="Nome da comanda" formControlName="name" />
+      <mat-error *ngIf="commandForm.get('name')?.invalid">Nome obrigatório</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="w-full">
+      <mat-label>Número da Mesa</mat-label>
+      <input
+        matInput
+        type="number"
+        placeholder="Número da mesa (opcional)"
+        formControlName="tableIndex"
+      />
+    </mat-form-field>
+
+    <div *ngIf="data?.command">
+      <mat-card *ngFor="let order of data.command?.orders" class="p-3 shadow-sm">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="font-bold mb-1">Pedido #{{ order.merchantSequence }}</h3>
+            <p>Status: {{ orderStatusMap[order.status] }}</p>
+          </div>
+          <button mat-icon-button color="primary" (click)="onEditOrder(order)">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+      
+        <ul class="text-sm text-gray-700 mt-2">
+          <li *ngFor="let item of order?.items">
+            {{ item.quantity }}x {{ item.item.name }} — R$: {{ item.totalPrice | number:'1.2-2' }}
+            <ul *ngIf="item?.options?.length" class="ml-4 text-gray-500 text-xs">
+              <li *ngFor="let opt of item?.options">
+                + {{ opt.quantity }}x {{ opt.option.name }}
+                <span *ngIf="opt.totalPrice"> — R$: {{ opt.totalPrice | number:'1.2-2' }}</span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <p class="text-sm text-gray-500 mt-2">Criado em: {{ order.createdAt | date: 'short' }}</p>
+        <p class="mt-2 font-bold">Total: R$ {{ order.total?.orderAmount | number:'1.2-2' }}</p>
+      </mat-card>      
+    </div>
+    
+
+    <ng-container *ngIf="data?.command?.id" >
+      <mat-slide-toggle [formControl]="showPaymentControl">Fechar comanda e pagar</mat-slide-toggle>
+
+      <ng-container *ngIf="showPaymentControl.value === true">
+        <h3 class="text-lg font-semibold mt-6 mb-2">Resumo</h3>
+        <div class="flex justify-between items-centertext-xl mt-2">
+          <span>Total dos Pedidos</span>
+          <span>R$: {{ calculateTotal() | number:'1.2-2' }}</span>
+        </div>
+
+
+        <mat-form-field  class="w-full">
+          <mat-label>Porcentagem da Taxa de Serviço</mat-label>
+          <mat-select [formControl]="paymentForm.controls.serviceFeePercent" (valueChange)="updatePaymentSplits()">
+            <mat-option [value]="0">Nada</mat-option>
+            <mat-option [value]="5">5%</mat-option>
+            <mat-option [value]="10">10%</mat-option>
+            <mat-option [value]="15">15%</mat-option>
+            <mat-option [value]="20">20%</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <h3 class="text-lg font-semibold mt-6 mb-2">Forma de Pagamento</h3>
+        <div [formGroup]="paymentForm">
+          <div formArrayName="methods" class="flex flex-col">
+            <div *ngFor="let methodCtrl of paymentMethodsArray.controls; let i = index" [formGroupName]="i" class="mb-4 border p-3 rounded flex flex-col">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Método de pagamento</mat-label>
+                <mat-select formControlName="method">
+                  <mat-option [value]="'CASH'">Dinheiro</mat-option>
+                  <mat-option [value]="'CREDIT'">Cartão de Crédito</mat-option>
+                  <mat-option [value]="'DEBIT'">Cartão de Débito</mat-option>
+                  <mat-option [value]="'PIX'">PIX</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <input formControlName="value" matInput appReplaceDotWithComma prefix="R$: " [decimalPlaces]="2" />
+              </mat-form-field>
+
+              <mat-select *ngIf="methodCtrl.get('method')?.value === 'CASH'" formControlName="changeFor" placeholder="Troco para">
+                <mat-option *ngFor="let option of changeForOptions">
+                  {{ option != null ? 'R$: ' + option : 'Sem troco' }}
+                </mat-option>
+              </mat-select>
+              <button mat-stroked-button color="warn" (click)="removePaymentMethod(i)">Remover</button>
+            </div>
+            <button mat-button color="primary" (click)="addPaymentMethod()">Adicionar Método de Pagamento</button>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="flex justify-between w-full">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <div class="flex gap-2">
+      <button mat-raised-button [color]="showPaymentControl.value ? 'accent': 'primary'" (click)="onSubmit()" [disabled]="!commandForm?.valid">
+        {{showPaymentControl.value ? 'Pagar': 'Salvar'}}
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

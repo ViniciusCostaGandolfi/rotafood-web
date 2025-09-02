@@ -1,53 +1,49 @@
-
 <div class="w-full z-50 fixed">
-    <mat-toolbar color="#fdfdfd" class="block lg:hidden justify-between w-full !h-[100px]">
-        <img class="w-10/12 sm:w-auto cursor-pointer sm:max-h-[100px] h-auto lg:max-w-xs lg:h-full" routerLink="/" src="assets/images/rotafood-logo.png" />
-        
-    
-        <div class="flex w-full justify-end">
-            <mat-menu #menu="matMenu" class="!px-3 !flex !items-center">
-                <ng-container *ngFor="let route of mockDefaultRoutes">
-                    <button mat-menu-item [routerLink]="route.href" (click)="scrollToId(route.scrollTo)">
-                        <span>{{route.title}}</span>
-                    </button>
-                </ng-container>
-            
-                <ng-container *ngFor="let item of mockLoginRegister">
-                    <div [routerLink]="item.href" class="!w-full pb-1">
-                        <button mat-raised-button class="!w-full" [color]="item.color">
-                            {{item.title}}
-                        </button>
-                    </div>
-                </ng-container>
-            </mat-menu>
-            
-        
-            <ul class= "flex justify-center items-center">
-                <li class="!hidden lg:!flex !text-center" *ngFor="let route of mockDefaultRoutes"  [routerLink]="route.href" (click)="scrollToId(route.scrollTo)">
-                    <div mat-menu-item >
-                        {{route.title}}
-                    </div>                
-                </li>
-    
-                <li class="!hidden sm:!flex  px-4"  *ngFor="let item of mockLoginRegister"  [routerLink]="item.href">
-                    <button mat-raised-button [color]="item.color">
-                        {{item.title}}
-                    </button>
-                </li>
-            </ul>  
-            
-            <button 
-            [matMenuTriggerFor]="menu"
-            
-            >
-                <mat-icon class="lg:!hidden mx-2 !text-[35px] !h-[35px] !w-[35px]">menu</mat-icon>
-            </button>
-        </div>
-    
-    
-    </mat-toolbar>
-    
-      
-</div>
+  <mat-toolbar
+    [class]="'block lg:hidden justify-between w-full !h-[100px] transition-colors duration-300 ' +
+            (hasScrolled ? '!bg-white shadow-md' : '!bg-transparent')">
 
-<div class="h-[100px]"></div>
+          <img alt="" class="w-10/12 cursor-pointer sm:w-1/5" routerLink="/" src="assets/images/rotafood-logo.png" />
+  
+      <div class="flex w-full justify-end">
+        <mat-menu #menu="matMenu" class="!px-3 !flex !items-center">
+          <ng-container *ngFor="let route of mockDefaultRoutes">
+            <button mat-menu-item [routerLink]="route.href" (click)="scrollToId(route.scrollTo)">
+              <span>{{ route.title }}</span>
+            </button>
+          </ng-container>
+          <ng-container *ngFor="let item of mockLoginDtoRegister">
+            <div [routerLink]="item.href" class="!w-full pb-1">
+              <button mat-raised-button class="!w-full" [color]="item.color">
+                {{ item.title }}
+              </button>
+            </div>
+          </ng-container>
+        </mat-menu>
+  
+        <ul class="flex justify-center items-center">
+          <li class="!hidden lg:!flex !text-center" *ngFor="let route of mockDefaultRoutes" [routerLink]="route.href" (click)="scrollToId(route.scrollTo)">
+            <div mat-menu-item>
+              {{ route.title }}
+            </div>
+          </li>
+  
+          <li class="!hidden sm:!flex px-4" *ngFor="let item of mockLoginDtoRegister" [routerLink]="item.href">
+            <button *ngIf="item.buttonType === 'raised'" mat-raised-button [color]="item.color">
+              {{ item.title }}
+            </button>
+            <button *ngIf="item.buttonType !== 'raised'" mat-stroked-button [color]="item.color">
+              {{ item.title }}
+            </button>
+          </li>
+        </ul>  
+  
+        <button [matMenuTriggerFor]="menu">
+          <mat-icon class="lg:!hidden mx-2 !text-[35px] !h-[35px] !w-[35px]">menu</mat-icon>
+        </button>
+      </div>
+    </mat-toolbar>
+  </div>
+  
+  <div class="h-[100px]"></div>
+  

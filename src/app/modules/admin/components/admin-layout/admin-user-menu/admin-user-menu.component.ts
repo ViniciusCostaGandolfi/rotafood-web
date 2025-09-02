@@ -1,10 +1,6 @@
 import { Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { CurrentlyUserService } from '../../../../../core/services/currently-user/currently-user.service';
-import { MerchantUser } from '../../../../../core/interfaces/merchant-user';
-import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
+import { CurrentUserService } from '../../../../../core/services/current-user/current-user.service';
+import { MerchantUser } from '../../../../../core/interfaces/merchant/merchant-user';
 import { Router } from '@angular/router';
 
 @Component({
@@ -16,8 +12,8 @@ export class AdminUserMenuComponent {
 
   public user: MerchantUser | null = null
   constructor(
-    private currentUser: CurrentlyUserService,
-    private router : Router
+    private readonly currentUser: CurrentUserService,
+    private readonly router : Router
     ){
     this.currentUser.getUser().subscribe(user => this.user = user)
   }

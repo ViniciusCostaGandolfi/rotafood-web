@@ -1,0 +1,96 @@
+<div class=" px-3 sm:px-32 pt-5 overflow-auto">
+
+  <div *ngIf="isLoading" class="flex justify-center items-center h-[50vh]">
+  <mat-spinner></mat-spinner>
+</div>
+
+
+  <mat-tab-group *ngIf="!isLoading" [(selectedIndex)]="activeTabIndex">
+    <div *ngFor="let catalog of catalogs">
+      <mat-tab *ngIf="catalog !== 'IFOOD'" [label]="catalogContextToString(catalog)">
+        <div class="w-full mt-8 space-y-8 min-h-[10vh]">
+
+          <div class="flex justify-between">
+            <h2 class="font-bold text-xl text-primary-500">Categorias</h2>
+            <button class="!text-xl font-bold" mat-button color="primary" (click)="updateOrCreateCategory()">
+              Categoria <mat-icon class="scale-125">add_circle</mat-icon>
+            </button>
+          </div>
+
+          <button class="!w-full" mat-raised-button color="primary" (click)="saveCategoryOrderChanges()" *ngIf="categoryOrderChanges.length > 0">
+            Salvar Nova Ordem
+          </button>
+          
+
+          <mat-card *ngFor="let category of categories; let i = index" class="w-full p-4">
+            <h1 class="text-1xl w-full font-bold mb-4 flex items-center justify-between">
+              {{ category.name }}
+              <div class="space-x-2 hidden sm:flex">
+                <button mat-icon-button color="primary" (click)="moveCategoryUp(i)" [disabled]="i === 0">
+                  <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" (click)="moveCategoryDown(i)" [disabled]="i === categories.length - 1">
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+              </div>
+
+
+
+              <button mat-icon-button [matMenuTriggerFor]="menuCategory">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #menuCategory="matMenu">
+                <button mat-menu-item (click)="updateOrCreateCategory(category, category.template)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Editar Categoria</span>
+                </button>
+                <button mat-menu-item (click)="deleteCategory(category)">
+                  <mat-icon>delete</mat-icon>
+                  <span>Deletar Categoria</span>
+                </button>
+                <button mat-menu-item class="!flex sm:!hidden" (click)="moveCategoryUp(i)" [disabled]="i === 0">
+                  Para Baixo
+                  <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button mat-menu-item class="!flex sm:!hidden" (click)="moveCategoryDown(i)" [disabled]="i === categories.length - 1">
+                  Para Cima
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+              </mat-menu>
+              
+              <button *ngIf="category.template === 'DEFAULT'" mat-button color="primary"
+                (click)="createItemPreparedOrInstructedDialog({item: null, categoryId: category.id})">
+                <mat-icon class="scale-125">add_circle</mat-icon> Item
+              </button>
+
+              <button *ngIf="category.template === 'PIZZA'" mat-button color="primary"
+                (click)="updateOrCreateItemPizzaTopping({item: category.items[0]})">
+                <mat-icon class="scale-125">add_circle</mat-icon> Sabor
+              </button>
+            </h1>
+
+            <app-table-category-default 
+              *ngIf="category.template === 'DEFAULT'" 
+              [category]="category" 
+              [catalog]="catalog"></app-table-category-default>
+
+            <app-table-category-pizza 
+              *ngIf="category.template === 'PIZZA'" 
+              [category]="category" 
+              [catalog]="catalog"></app-table-category-pizza>
+
+
+          </mat-card>
+
+          <div *ngIf="categories.length === 0">
+            <div class="grid h-[50vh] place-content-center bg-white px-4">
+              <h1 class="uppercase tracking-widest text-gray-500">Sem categorias!</h1>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </div>
+
+  </mat-tab-group>
+</div>

@@ -24,16 +24,18 @@ export const mockDefaultRoutes = [
     
 ]
 
-export const mockLoginRegister = [
+export const mockLoginDtoRegister = [
     {
         title: 'Entrar',
-        href: '/login',
-        color: 'accent'
+        href: '/entrar',
+        color: 'primary',
+        buttonType: 'stroked'
     },
     {
         title: 'Criar Conta',
-        href: '/register',
-        color: 'primary'
-    },
+        href: '/registrar',
+        color: 'primary',
+        buttonType: 'raised'
+    }
     
 ]

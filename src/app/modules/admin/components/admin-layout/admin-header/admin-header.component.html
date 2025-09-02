@@ -1,12 +1,17 @@
-
 <div class="w-full sticky top-0 z-50">
-    <mat-toolbar class=" !bg-[#fdfdfd] flex !h-auto justify-between mx-1">
-        <button (click)="toggleSideNav()">
-            <mat-icon class="!text-[35px] !h-[35px] !w-[35px]">menu</mat-icon>
-        </button>
-        <img class="w-9/12 sm:w-auto cursor-pointer sm:max-h-[20vh] h-auto lg:max-w-xs lg:h-full" routerLink="/admin" src="assets/images/rotafood-logo.png" />
-        <app-admin-user-menu></app-admin-user-menu>
-    </mat-toolbar>
-</div>
+    <mat-toolbar class="!bg-[#fdfdfd] flex items-center justify-between mx-1">
+      <button (click)="toggleSideNav()">
+        <mat-icon class="!text-[35px] !h-[35px] !w-[35px]">menu</mat-icon>
+      </button>
   
-
+      <img
+        alt="logo"
+        class="w-auto max-h-[7vh] cursor-pointer mt-4"
+        routerLink="/admin"
+        [src]="'assets/images/rotafood-icone.png'"
+      />
+  
+      <app-admin-user-menu></app-admin-user-menu>
+    </mat-toolbar>
+  </div>
+  

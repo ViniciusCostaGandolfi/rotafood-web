@@ -1,0 +1,28 @@
+<div class="relative max-w-full-xl p-4 px-4 mx-auto bg-white sm:px-6 lg:px-8 py-26 lg:mt-20" id="home-services-section">
+    <div class="relative">
+        <div class="">
+            <div class="ml-auto ">
+                <p class="text-base font-semibold leading-6 text-accent-500 uppercase">
+                    Serviços
+                </p>
+                <h4 class="mt-2 text-2xl font-extrabold leading-8 text-gray-900  sm:text-3xl sm:leading-9">
+                    Nosso Sistema Oferece Diversos Serviços além da Roterização
+                </h4>
+                <p class="mt-4 text-lg leading-6 text-gray-500 ">
+                    Fornecemos um sistema completo para seu estabelecimento, gestão de pedidos, cardápio, integração com , Rotas e MUITO MAIS!
+                </p>
+                <ul class="gap-6 mt-8 md:grid md:grid-cols-2">
+                    
+                    <div class="mt-6 lg:mt-0" *ngFor="let rotafoodService of rotafoodServices">
+                        <div class="flex">
+        
+                            <mat-icon class="text-green-800 bg-green-100 rounded-full" >check_circle_outline</mat-icon>
+                            <p class="ml-4 text-base font-medium leading-6 text-gray-500">{{rotafoodService.text}}</p>
+                        </div>
+                  </div>
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+</div>

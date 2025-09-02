@@ -1,0 +1,21 @@
+<div class="h-full w-full flex flex-col overflow-hidden">  
+    <mat-dialog-content  class="flex flex-col items-center text-center !h-full">
+      <div class="font-bold mb-4 text-2xl text-gray-800 sm:text-3xl">
+        Escolha o tipo de item
+      </div>
+      <div class="flex flex-col space-y-4 w-full h-4/5">
+        <button mat-button color="primary" class="w-full !h-full py-8 !text-xl" (click)="createPreparedItem()">
+          <mat-icon class="scale-150">restaurant</mat-icon>
+          Item Preparado
+        </button>
+        <button mat-button color="accent" class="w-full !h-full py-8 !text-xl" (click)="createInstructedItem()">
+          <mat-icon class="scale-150">storefront</mat-icon>
+          Item Industrializado
+        </button>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions class="flex-shrink-0 justify-center mt-6">
+      <button mat-button mat-dialog-close (click)="onClose()">Cancelar</button>
+    </mat-dialog-actions>
+  </div>
+  

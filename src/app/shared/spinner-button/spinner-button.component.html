@@ -1,4 +1,4 @@
-<button mat-raised-button color="primary" type="submit" [class]="class" [disabled]="isLoading" (click)="handleClick($event)">
+<button mat-raised-button color="primary" type="submit" [class]="class" [disabled]="isLoading || disabled" (click)="handleClick($event)">
     <ng-container *ngIf="!isLoading; else loading">
       <ng-content></ng-content>
     </ng-container>

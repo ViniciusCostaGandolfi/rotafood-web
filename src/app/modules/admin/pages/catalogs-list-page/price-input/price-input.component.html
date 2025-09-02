@@ -1,0 +1,5 @@
+<mat-form-field appearance="outline" class="!w-28">
+    <mat-label>{{title}}</mat-label>
+    <input matInput type="text" [value]="formatPrice(price)" appReplaceDotWithComma prefix="R$: "
+      (change)="onInput($event)" placeholder="Digite o preço" />
+  </mat-form-field>

@@ -1,0 +1,80 @@
+<mat-drawer-container class="!bg-[#fdfdfd]" fullscreen>
+    
+
+    <div class="absolute top-0 left-0 w-full h-36 bg-primary-500 flex items-center justify-between px-4">
+        <p class="text-center font-bold text-white mt-2 flex-1">ROTAFOOD</p>
+        
+
+    </div>
+
+    <div class="relative flex flex-col min-h-[calc(100vh-2.5rem)] justify-between z-10 mx-2 mt-10">
+        <app-catalog-online-header [merchant]="merchant" [hasOpened]="hasOpened"></app-catalog-online-header>
+        <div class="flex-1">
+            <div class="h-full !bg-[#fdfdfd] pt-10 px-1">
+                <ng-content></ng-content>
+            </div>
+        </div>
+        <div *ngIf="showItemsButton" class="fixed bottom-0 left-0 w-full bg-white shadow-lg p-2">
+            <button class="w-full py-3 !text-lg !font-bold" mat-button color="accent" (click)="toggleSideNav()">Ver
+                sacola</button>
+        </div>
+        <app-footer class="mb-5" [imagePath]="'assets/images/rotafood-logo.png'"></app-footer>
+    </div>
+
+    <mat-drawer class="!bg-[#fdfdfd]" position="end" [mode]="isMobile ? 'over' : 'side'" [opened]="showNav">
+        <div class="flex flex-col w-[90vw] sm:w-[30vw] p-4 h-full justify-between">
+            <div>
+                <div class="flex justify-between">
+                    <h2 class="text-2xl font-bold text-primary-500 mb-4">Sacola</h2>
+
+                    <button mat-icon-button (click)="toggleSideNav()" class="text-white">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+                <div *ngFor="let item of orderItems; let i = index;" class="mb-3">
+                    <mat-card class="p-4 flex flex-col gap-4">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <img *ngIf="item.item.imagePath" [src]="item.item.imagePath" alt="{{ item.item.name }}"
+                                    class="w-16 h-16 object-cover rounded">
+                                <div>
+                                    <h3 class="font-bold text-lg">{{ item.item.name }}</h3>
+                                    <p class="text-gray-500">{{ item.quantity }}x • R$:{{ item.totalPrice |
+                                        number:'1.2-2' }}</p>
+                                    <p *ngIf="item.options?.length" class="text-sm text-gray-400">
+                                        <span *ngFor="let option of item.options">
+                                            {{ option.option.name }} R$:(+{{ option.totalPrice | number:'1.2-2' }})
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <button mat-icon-button color="warn" (click)="removeItem(i)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <button mat-mini-fab color="warn" (click)="decreaseQuantity(i)">
+                                <mat-icon>remove</mat-icon>
+                            </button>
+                            <span class="text-lg font-bold">{{ item.quantity }}</span>
+                            <button mat-mini-fab color="primary" (click)="increaseQuantity(i)">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card>
+                </div>
+
+                <div class="flex justify-between items-center font-bold text-lg mt-4">
+                    <span>Total:</span>
+                    <span>R$: {{ totalPrice | number:'1.2-2' }}</span>
+                </div>
+            </div>
+
+            <button class="w-full mt-4 py-3 !text-lg !font-bold" mat-raised-button color="primary"
+                [disabled]="!hasOpened" (click)="goToReview()">
+                Finalizar Pedido
+            </button>
+        </div>
+    </mat-drawer>
+</mat-drawer-container>

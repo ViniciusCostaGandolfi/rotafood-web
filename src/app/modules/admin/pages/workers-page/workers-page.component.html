@@ -1,0 +1,66 @@
+<div class="w-full min-h-[80vh] p-4 flex flex-col">
+
+    <!-- Cabeçalho com título e botão de adicionar -->
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-2xl font-bold">Funcionários</h1>
+      <button mat-raised-button color="primary" (click)="openCreateDialog()">Adicionar</button>
+    </div>
+  
+    <!-- Tabela de funcionários -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Nome
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Telefone
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Email
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Função
+            </th>
+            <th class="px-6 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200" *ngIf="workers && workers.length">
+          <tr *ngFor="let worker of workers">
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ worker.name }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ worker.phone }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ worker.email }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ worker.role }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <button mat-button color="primary" (click)="openEditDialog(worker)">
+                Editar
+              </button>
+              <button mat-button color="warn" (click)="deleteWorker(worker.id)">
+                Deletar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="workers && workers.length === 0">
+          <tr>
+            <td colspan="5" class="px-6 py-4 text-center">
+              Nenhum funcionário encontrado.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+    </div>
+  </div>
+  

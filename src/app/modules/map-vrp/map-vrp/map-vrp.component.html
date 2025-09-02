@@ -2,12 +2,17 @@
   <mat-drawer #drawer class="w-60 sm:w-80" mode="side" position="start">
     <p class="p-4 font-medium text-lg">Informações das Rotas</p>
     <div *ngFor="let route of vrp?.routes; let i = index" class="p-4 border-b border-gray-200">
-      <p><strong>Rota {{ i + 1 }}:</strong></p>
+      <div class="flex"><strong>Rota {{ i + 1 }}</strong> <div [ngStyle]="{'background-color': colormap[i], 'width': '20px', 'height': '20px', 'border-radius': '50%'}"></div>   </div>
       <p>Distância: {{ route.distanceMeters.toFixed(2) }} metros</p>
-      <p>Volume: {{ route.volumeLiters.toFixed(2) }} litros</p>
+      <p>
+        Volume: 
+        {{ ((route.volumeLiters / 45) * 100) | number: '1.0-0' }}% cheio
+      </p>
+      <p>Número de Entregas: {{ route.orders.length }}</p>
       <button mat-raised-button color="primary" class="!my-2 !w-full" (click)="onRouteButtonClick(route)">Ver no Mapa</button>
-      <button mat-raised-button color="primary" class="!my-2 !w-full">
-        <a [href]="route.linkGoogleMaps" target="_blank">Google Maps</a></button>
+      <a class="w-full" mat-raised-button color="primary"  [href]="route.linkGoogleMaps" target="_blank" rel="noopener noreferrer">
+        Google Maps
+      </a>      
       <mat-expansion-panel class="my-2">
         <mat-expansion-panel-header>
           Pedidos
@@ -45,9 +50,9 @@
       <mgl-control mglNavigation position="top-right"></mgl-control>
       <mgl-control mglFullscreen position="top-right"></mgl-control>
       <mgl-control position="top-left">
-        <button class="!bg-primary-500 !p-0" mat-icon-button color="primary" (mouseover)="'warn'" (mouseout)="'accent'"
+        <button class="!bg-primary-500" mat-raised-button color="primary" (mouseover)="'warn'" (mouseout)="'accent'"
           (click)="drawer.toggle()">
-          <mat-icon class="text-gray-50">menu</mat-icon>
+          <mat-icon>menu</mat-icon>
         </button>
       </mgl-control>
 

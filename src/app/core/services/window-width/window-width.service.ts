@@ -1,35 +1,42 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { fromEvent, Observable, BehaviorSubject, of } from 'rxjs';
-import { map, distinctUntilChanged, startWith } from 'rxjs/operators';
-import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser }               from '@angular/common';
+import { BehaviorSubject, Observable, fromEvent, of } from 'rxjs';
+import { map, distinctUntilChanged, startWith }       from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class WindowWidthService {
-  private windowWidth$: Observable<number>;
-  private isMobileSubject: BehaviorSubject<boolean>;
+
+  private readonly width$: Observable<number>;
+
+  private readonly isMobileSubject: BehaviorSubject<boolean>;
 
   constructor() {
-      this.windowWidth$ = fromEvent(window, 'resize').pipe(
-        map(event => (event.target as Window).innerWidth),
-        startWith(window.innerWidth),
-        distinctUntilChanged()
-      );
+    const platformId   = inject(PLATFORM_ID);
+    const isBrowser    = isPlatformBrowser(platformId);
 
-      this.isMobileSubject = new BehaviorSubject<boolean>(window.innerWidth <= 600);
+    const firstWidth   = isBrowser ? window.innerWidth : 1024;
 
-      this.windowWidth$.subscribe(width => {
-        this.isMobileSubject.next(width <= 600);
-      });
+    /* stream                                            */
+    this.width$ = isBrowser
+      ? fromEvent(window, 'resize').pipe(
+          map(ev => (ev.target as Window).innerWidth),
+          startWith(firstWidth),
+          distinctUntilChanged()
+        )
+      : of(firstWidth)
 
+    this.isMobileSubject = new BehaviorSubject<boolean>(firstWidth <= 600);
+
+    if (isBrowser) {
+      this.width$.subscribe(w => this.isMobileSubject.next(w <= 600));
+    }
   }
 
   getWindowWidth(): Observable<number> {
-    return this.windowWidth$;
-  }
+    return this.width$
+  };
 
   isMobile(): Observable<boolean> {
-    return this.isMobileSubject.asObservable();
-  }
+    return this.isMobileSubject.asObservable()
+  };
 }

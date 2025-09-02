@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Coordinate, VrpRoute } from '../../../../core/interfaces/vrp';
+import { CoordinateDto } from '../../../../core/interfaces/shared/address';
+import { VrpRoute } from '../../../../core/interfaces/vrp/vrp';
 
 @Component({
   selector: 'app-map-vrp-route',
@@ -11,6 +12,8 @@ export class MapVrpRouteComponent implements OnInit {
     type: 'LineString',
     coordinates: [
       [-47.402459, -22.571489],
+      [-47.402459, -21.571489],
+      [-46.402459, -21.571489]
     ],
   };
 
@@ -21,7 +24,7 @@ export class MapVrpRouteComponent implements OnInit {
   public paint: any;
 
   ngOnInit(): void {
-    const coordinates = this.route.routeLine.map((coord: Coordinate) => [coord.lng, coord.lat])
+    const coordinates = this.route.routeLine.map((coord: CoordinateDto) => [coord.lng, coord.lat])
     this.geometry = {
       type: 'LineString',
       coordinates: coordinates,

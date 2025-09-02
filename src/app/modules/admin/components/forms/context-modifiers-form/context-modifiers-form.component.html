@@ -1,0 +1,82 @@
+<form [formGroup]="contextModifiersForm">
+    <div
+  class="flex flex-col sm:flex-row gap-3 mt-5 justify-around"
+  formArrayName="contextModifiers"
+>
+  <div
+    *ngFor="
+      let contextModifier of getContextModifiersFormArray().controls;
+      let i = index
+    "
+    [formGroupName]="i"
+    [ngClass]="{
+      'w-full': contextModifier.get('catalogContext')?.value !== 'IFOOD'
+    }"
+  >
+    <div
+      class="border p-4 rounded shadow-sm w-full flex-1"
+      *ngIf="contextModifier.get('catalogContext')?.value !== 'IFOOD'"
+    >
+      <div class="text-lg font-semibold mb-4">
+        Preço
+        {{ contextLabel(contextModifier.get('catalogContext')?.value) }}
+      </div>
+
+      <mat-checkbox formControlName="status">
+        Item disponível
+        {{ contextLabel(contextModifier.get('catalogContext')?.value) }}
+      </mat-checkbox>
+
+      <div formGroupName="price">
+        <mat-checkbox formControlName="hasDiscount">
+          Tem desconto?
+        </mat-checkbox>
+
+        <div *ngIf="contextModifier.get('price.hasDiscount')?.value">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Preço Original</mat-label>
+            <input
+              matInput
+              type="text"
+              appReplaceDotWithComma
+              prefix="R$: "
+              formControlName="originalValue"
+              placeholder="Preço Original"
+            />
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>{{
+            contextModifier.get('price')?.get('hasDiscount')?.value
+            ? 'Preço Final'
+              : 'Preço'
+          }}</mat-label>
+          <input
+            matInput
+            type="text"
+            appReplaceDotWithComma
+            prefix="R$: "
+            formControlName="value"
+            placeholder="Preço"
+          />
+        </mat-form-field>
+
+        <div
+          class="px-5 flex items-center gap-2"
+          *ngIf="contextModifier.get('price.hasDiscount')?.value"
+        >
+          <p class="text-lg font-bold text-green-600">
+            {{ contextModifier.get('price')?.get('value')?.value }}
+          </p>
+          <p class="text-sm text-gray-500 line-through">
+            {{
+              contextModifier.get('price')?.get('originalValue')?.value
+            }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</form>

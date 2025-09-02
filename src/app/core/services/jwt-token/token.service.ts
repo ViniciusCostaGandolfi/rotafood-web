@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 
 
@@ -9,22 +10,21 @@ export const KEY = 'ROTAFOOD_TOKEN';
 })
 export class TokenService {
 
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
   saveToken(token: string): void {
-    localStorage.setItem(KEY, token)
+    if (this.isBrowser) localStorage.setItem(KEY, token);
   }
-
   deleteToken(): void {
-    localStorage.removeItem(KEY)
+    if (this.isBrowser) localStorage.removeItem(KEY);
   }
-
-  getToken(): string {
-    return localStorage.getItem(KEY) ?? ''
+  getToken(): string | null {
+    return this.isBrowser ? localStorage.getItem(KEY) : null;
   }
-
 
   getExp(): number {
     try {
-      const { exp } = jwtDecode(this.getToken());
+      const { exp } = jwtDecode(this.getToken() as string);
       return exp as number
     } catch {
       return 0

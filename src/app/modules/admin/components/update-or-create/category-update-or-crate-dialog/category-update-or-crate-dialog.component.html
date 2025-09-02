@@ -1,0 +1,29 @@
+<div class="h-full w-full flex flex-col overflow-hidden">  
+    <div mat-dialog-content class="flex-1 overflow-auto">
+        <div class="flex flex-col justity-center text-center">
+            <div class=" justify-center font-bold	 mb-2 text- text-xl text-gray-800 sm:text-2xl ">
+                {{data?.id ? 'Editar Categoria ' + data?.name  : 'Criar Categoria'}}
+            </div>
+        </div>
+      <form [formGroup]="categoryForm" class="h-auto w-full flex flex-col">
+        <mat-form-field class="w-full">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" placeholder="Nome da Categoria">
+          <mat-error *ngIf="categoryForm.get('name')?.invalid">
+            O nome é obrigatório.
+          </mat-error>
+        </mat-form-field>
+  
+        <div class="flex items-center justify-between mt-4">
+        </div> 
+      </form>
+    </div>
+  
+    <div mat-dialog-actions class="flex-shrink-0">
+      <button mat-button mat-dialog-close>Cancelar</button>
+      <app-spinner-button color="primary" [disabled]="categoryForm.invalid" [isLoading]="isLoading" (click)="onSubmit()">
+          Criar
+      </app-spinner-button>
+    </div>
+  </div>
+  

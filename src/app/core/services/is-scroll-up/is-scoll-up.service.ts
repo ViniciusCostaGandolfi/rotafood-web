@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class IsScollUpService {
-  private scrolledUp = new BehaviorSubject<boolean>(false);
+  private readonly scrolledUp = new BehaviorSubject<boolean>(false);
   private lastScrollTop = 0;
 
   constructor() {

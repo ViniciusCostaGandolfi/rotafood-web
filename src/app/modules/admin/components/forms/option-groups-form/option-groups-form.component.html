@@ -1,0 +1,143 @@
+<form [formGroup]="complementsForm" class="w-full">
+
+  <mat-slide-toggle formControlName="hasComplements">
+    Tem complementos?
+  </mat-slide-toggle>
+
+  <ng-container *ngIf="complementsForm.get('hasComplements')?.value">
+
+    <div class="flex gap-5 my-4">
+      <button mat-raised-button class="!h-full" color="primary"
+              (click)="updateOrCreateOptionGroupDialog()">
+        Criar Complemento
+      </button>
+
+      <button mat-stroked-button class="!h-full" color="primary" type="button"
+              (click)="openCopyDialog()">
+        Copiar Complemento(s)
+      </button>
+    </div>
+
+    <div formArrayName="ItemOptionGroups">
+      <div *ngFor="let grp of groupsArray.controls; let i = index"
+           [formGroupName]="i" class="mb-6">
+
+        <ng-container *ngIf="grp.get('optionGroup')?.value; else selectGroup">
+
+          <mat-expansion-panel class="mb-4">
+
+            <mat-expansion-panel-header
+              class="flex justify-between w-full">
+              <span class="text-lg font-semibold">
+                {{ grp.get('optionGroup')?.value?.name }}
+              </span>
+            </mat-expansion-panel-header>
+
+            <span class="flex items-center gap-2"
+                    mat-panel-description>
+                <button mat-icon-button color="warn" type="button"
+                        (click)="removeOptionGroup(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+
+                <button mat-icon-button color="warn" type="button"
+                        (click)="updateOrCreateOptionGroupDialog(
+                               grp.get('optionGroup')?.value)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+
+                <button mat-icon-button color="primary" type="button"
+                        (click)="moveUp(i)" [disabled]="i === 0">
+                  <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" type="button"
+                        (click)="moveDown(i)"
+                        [disabled]="i === groupsArray.length - 1">
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+              </span>
+            <div class="grid grid-cols-2 gap-4 px-1 pb-4">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Mínimo</mat-label>
+                <input matInput type="number"
+                       formControlName="min" placeholder="Mín" />
+                <mat-error *ngIf="grp.get('min')?.hasError('required')">
+                  Obrigatório
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Máximo</mat-label>
+                <input matInput type="number"
+                       formControlName="max" placeholder="Máx" />
+                <mat-error *ngIf="grp.get('max')?.hasError('required')">
+                  Obrigatório
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="space-y-3 px-1 pb-4">
+              <mat-card *ngFor="let opt of grp.get('optionGroup')?.value?.options"
+                        appearance="outlined">
+                <mat-card-header>
+                  <mat-card-title-group>
+                    <img mat-card-md-image
+                         [src]="opt.product?.imagePath
+                                || 'assets/images/placeholder.png'"
+                         alt="imagem" />
+                    <mat-card-title>
+                      {{ opt.product?.name || 'Sem Nome' }}
+                    </mat-card-title>
+                  </mat-card-title-group>
+                </mat-card-header>
+
+                <mat-card-content>
+                  <div *ngFor="let mod of opt.contextModifiers"
+                       class="flex justify-between border-b py-2">
+                    <div *ngIf="mod.catalogContext !== 'IFOOD'">
+                      <p><strong>
+                        Preço {{ contextLabel(mod.catalogContext) }}
+                      </strong></p>
+                      <p class="text-sm text-gray-600">
+                        {{ mod.status === 'AVAILIABLE' ? 'Ativo' : 'Pausado' }}
+                      </p>
+                      <p class="font-semibold">
+                        R$ {{ (mod.price?.value || 0) | number : '1.2-2' }}
+                      </p>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+          </mat-expansion-panel>
+        </ng-container>
+
+        <ng-template #selectGroup>
+          <div class="w-full flex items-center">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Selecionar Grupo de Opções</mat-label>
+              <mat-select formControlName="optionGroup"
+                          (selectionChange)="onGroupSelected(grp, $event.value)">
+                <mat-option *ngFor="let avail of availableGroups"
+                            [value]="avail">
+                  {{ avail.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="grp.get('optionGroup')?.hasError('required')">
+                Campo obrigatório
+              </mat-error>
+            </mat-form-field>
+
+            <button mat-icon-button color="warn" type="button"
+                    (click)="removeOptionGroup(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </ng-template>
+
+      </div>
+    </div>
+  </ng-container>
+
+</form>

@@ -1,0 +1,116 @@
+<div mat-dialog-title>
+  <div class="flex justify-between items-center">
+    <h2>{{ optionGroupForm.get('id')?.value ? 'Editar Grupo de Complementos' : 'Criar Grupo de Complementos' }}</h2>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<mat-dialog-content class="!max-h-[80vh]">
+  <form class="h-full" [formGroup]="optionGroupForm">
+    <mat-form-field appearance="outline" class="!w-full">
+      <mat-label>Nome do Grupo</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error *ngIf="optionGroupForm.get('name')?.hasError('required')">
+        Nome é obrigatório
+      </mat-error>
+    </mat-form-field>
+    <mat-slide-toggle formControlName="status">
+      Grupo de complemento {{ optionGroupForm.get('status')?.value === 'AVAILIABLE' ? 'Ativado' : 'Pausado' }}
+    </mat-slide-toggle>
+
+
+    <h3>Complementos</h3>
+    <div formArrayName="options">
+      <div *ngIf="optionsFormArray.errors?.['minLengthArray']">
+        <p class="text-red-500">É necessário adicionar pelo menos uma opção.</p>
+      </div>
+
+      <div *ngFor="let option of optionsFormArray.controls; let i = index" [formGroupName]="i"
+        class="shadow-sm">
+        <mat-card>
+          <mat-card-content>
+            <div class="w-full flex flex-col justify-between pb-5">
+              <h3>Complemento {{ i + 1 }}</h3>
+              <div class="flex items-center gap-2">
+                <button mat-mini-fab color="primary" type="button" (click)="moveOptionUp(i)" [disabled]="i === 0">
+                  <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button mat-mini-fab color="primary" type="button" (click)="moveOptionDown(i)"
+                        [disabled]="i === optionsFormArray.length - 1">
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+            
+                <button mat-mini-fab color="accent" type="button" matTooltip="Copiar de outro produto." (click)="openProductSelectorDialog(i)">
+                  <mat-icon>content_copy</mat-icon>
+                </button>
+            
+                <mat-slide-toggle formControlName="status">
+                  {{ option.get('status')?.value === 'AVAILIABLE' ? 'Ativo' : 'Pausado' }}
+                </mat-slide-toggle>
+              </div>
+            </div>            
+
+            <form class="w-full gap-2 items-center flex flex-col" formGroupName="product">
+              <div class="w-full">
+                <app-image-selector [imagePath]="option.get('product.imagePath')?.value"
+                  (onSelectedImageChange)="updateImagePath($event, i)">
+                </app-image-selector>
+              </div>
+              <mat-form-field appearance="outline" class="w-full" appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput formControlName="name" />
+                <mat-error *ngIf="option.get('name')?.hasError('required')">
+                  Nome é obrigatório
+                </mat-error>
+              </mat-form-field>
+              <div>{{option.get('description')?.value}}</div>
+              <mat-form-field appearance="outline" class="w-full" appearance="outline">
+                <mat-label>Descrição</mat-label>
+                <textarea matInput type="" formControlName="description"></textarea>
+              </mat-form-field>
+              <div>{{option.get('name')?.value}}</div>
+            </form>
+
+            <h4 class="text-xl my-3">Preços</h4>
+            <div formArrayName="contextModifiers" class="flex flex-col sm:flex-row gap-3 mt-5  justify-around">
+              <div *ngFor="let contextModifier of getContextModifiersFormArray(i).controls; let j = index"
+                [formGroupName]="j" [ngClass]="{
+                  'w-full': contextModifier.get('catalogContext')?.value !== 'IFOOD'
+                }">
+                <div class="w-full flex-1" *ngIf="contextModifier.get('catalogContext')?.value !== 'IFOOD'">
+                  <div class="text-lg font-semibold mb-4">
+                    Preço {{ getCatalogContextToString(contextModifier.get('catalogContext')?.value) }}
+                  </div>
+                  <mat-checkbox formControlName="status">
+                    Item disponível {{ getCatalogContextToString(contextModifier.get('catalogContext')?.value) }}
+                  </mat-checkbox>
+                  <div formGroupName="price">
+                    <mat-form-field appearance="outline" class="w-full">
+                      <mat-label>Preço </mat-label>
+                      <input matInput type="text" appReplaceDotWithComma prefix="R$: " formControlName="value"
+                        placeholder="Preço" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <button mat-button color="warn" type="button" (click)="removeOption(i)">
+              Remover Opção
+            </button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <button mat-button color="primary" type="button" (click)="addOption()">Adicionar Complemento</button>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <app-spinner-button mat-raised-button color="primary" [disabled]="!formsValids()" (click)="onSubmit()" [isLoading]="isLoading">Salvar</app-spinner-button>
+</mat-dialog-actions>

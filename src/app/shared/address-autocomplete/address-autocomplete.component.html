@@ -1,0 +1,120 @@
+<form [formGroup]="addressForm" class="flex flex-col gap-4">
+  <mat-button-toggle-group
+    [value]="mode"
+    (change)="setMode($event.value)"
+    aria-label="Modo de preenchimento"
+    class="mb-2"
+  >
+    <mat-button-toggle value="search">Pesquisar</mat-button-toggle>
+    <mat-button-toggle>
+      <button
+      mat-button
+      type="button"
+      (click)="getUserLocation()"
+      matTooltip="Usar minha localização atual"
+      aria-label="Botão para usar a localização atual do usuário"
+    >
+      Onde Estou
+      <mat-icon>my_location</mat-icon>
+    </button>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <div *ngIf="loading" class="text-sm text-blue-600 p-2 flex items-center gap-2">
+    <mat-spinner diameter="24"></mat-spinner> Buscando endereço...
+  </div>
+
+  <div *ngIf="!loading && getFormattedAddress()" 
+      class="text-sm p-3 bg-gray-100 rounded-lg border border-gray-200 shadow-sm">
+  
+  <div class="flex justify-between items-center mb-1">
+    <button mat-button (click)="setMode('manual')" 
+            matTooltip="Editar endereço" 
+            aria-label="Botão para editar o endereço">
+      Editar Endereço
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+
+  <p class="text-gray-600 leading-snug">
+    {{ getFormattedAddress() }}
+  </p>
+  
+</div>
+  <mat-form-field appearance="outline" *ngIf="mode === 'search'">
+    <mat-label>Pesquisar novo endereço</mat-label>
+    <input
+      matInput
+      type="text"
+      [formControl]="searchCtrl"
+      [matAutocomplete]="auto"
+      (keydown.enter)="$event.preventDefault()"
+    />
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      (optionSelected)="onAddressSelected($event.option.value)"
+      [displayWith]="displayAddress"
+    >
+      <mat-option *ngFor="let opt of suggestions" [value]="opt">
+        {{ opt.formattedAddress || formatSuggestion(opt) }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="mode === 'manual'">
+    <mat-label>Número</mat-label>
+    <input matInput formControlName="streetNumber" />
+    <mat-error *ngIf="addressForm.get('streetNumber')?.hasError('required')">
+      O número é obrigatório.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="mode === 'manual'">
+    <mat-label>Rua</mat-label>
+    <input matInput formControlName="streetName" />
+    <mat-error *ngIf="addressForm.get('streetName')?.hasError('required')">
+      A rua é obrigatória.
+    </mat-error>
+     <mat-error *ngIf="addressForm.get('streetName')?.hasError('minlength')">
+      A rua deve ter no mínimo 3 caracteres.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Complemento</mat-label>
+    <input matInput formControlName="complement" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="mode === 'manual'">
+    <mat-label>CEP</mat-label>
+    <input matInput formControlName="postalCode" />
+    <mat-error *ngIf="addressForm.get('cep')?.hasError('required')">
+      O CEP é obrigatório.
+    </mat-error>
+    <mat-error *ngIf="addressForm.get('cep')?.hasError('minlength') || addressForm.get('cep')?.hasError('maxlength')">
+      O CEP deve ter 8 dígitos.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="mode === 'manual'">
+    <mat-label>Bairro</mat-label>
+    <input matInput formControlName="neighborhood" />
+    <mat-error *ngIf="addressForm.get('neighborhood')?.hasError('required')">
+      O bairro é obrigatório.
+    </mat-error>
+     <mat-error *ngIf="addressForm.get('neighborhood')?.hasError('minlength')">
+      O bairro deve ter no mínimo 3 caracteres.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="mode === 'manual'">
+    <mat-label>Cidade</mat-label>
+    <input matInput formControlName="city" />
+    <mat-error *ngIf="addressForm.get('city')?.hasError('required')">
+      A cidade é obrigatória.
+    </mat-error>
+     <mat-error *ngIf="addressForm.get('city')?.hasError('minlength')">
+      A cidade deve ter no mínimo 3 caracteres.
+    </mat-error>
+  </mat-form-field>
+</form>

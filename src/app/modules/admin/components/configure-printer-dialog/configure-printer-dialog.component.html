@@ -1,0 +1,104 @@
+<div mat-dialog-title>
+    <div class="flex justify-between items-center">
+      <h2 class="text-xl text-primary-500 font-bold">Configure sua Impressora Térmica</h2>
+      <button mat-icon-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  
+ <mat-dialog-content [formGroup]="form" class="flex-1 overflow-auto !max-h-[100vh] p-4">
+    <div class="flex flex-col gap-4 items-center">
+      <p class="text-lg font-semibold text-center">
+        Para configurar sua impressora corretamente:
+      </p>
+      <ul class="text-base list-disc pl-6 max-w-md">
+        <li>Baixe e abra a extensão de impressão abaixo.</li>
+        <li>Com ela aberta, os pedidos serão impressos automaticamente.</li>
+      </ul>
+      <a
+        target="_blank"
+        [href]="extensionLink"
+        mat-raised-button
+        color="accent"
+        class="w-full my-4"
+      >
+        Baixar Extensão
+      </a>
+    </div>
+
+    <mat-divider class="my-6"></mat-divider>
+
+    <div class="flex flex-col gap-4">
+      <mat-form-field appearance="outline">
+        <mat-label>Impressora</mat-label>
+        <mat-select formControlName="printerName" required>
+          <mat-option *ngIf="printers.length === 0" disabled>
+            Carregando...
+          </mat-option>
+          <mat-option
+            *ngFor="let p of printers"
+            [value]="p"
+          >
+            {{ p }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="flex gap-4" >
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Largura (mm)</mat-label>
+          <mat-select formControlName="widthMm">
+            <mat-option
+              *ngFor="let w of widthMmAvailable"
+              [value]="w"
+            >
+              {{ w }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Margem (pt)</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="marginPt"
+            min="0"
+            max="30"
+          />
+        </mat-form-field>
+      </div>
+
+      <!-- <mat-slide-toggle formControlName="useStyle">
+        Usar estilos (negrito/inverso)
+      </mat-slide-toggle> -->
+
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
+        (click)="testPrint()"
+        [disabled]="form.invalid"
+      >
+        Imprimir teste
+      </button>
+
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <div class="flex justify-between w-full px-4 pb-4">
+      <button mat-button mat-dialog-close>Cancelar</button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="saveConfigs()"
+        [disabled]="form.invalid"
+      >
+        OK
+      </button>
+    </div>
+  </mat-dialog-actions>
+  

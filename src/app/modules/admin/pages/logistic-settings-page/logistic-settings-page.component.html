@@ -1,0 +1,102 @@
+<div class="table-container px-3 pt-5 max-w-full overflow-auto">
+  <div class="flex flex-col gap-6">
+    <h1 class="font-bold text-2xl text-primary-500">Configurações de Entrega</h1>
+
+    <mat-card class="p-4">
+      <form [formGroup]="logisticsForm" (ngSubmit)="saveLogisticsSettings()">
+        
+        <mat-slide-toggle formControlName="isFreeDeliveryRadiusEnabled" class="mb-4">
+          Usar entrega gratuita dentro de um raio específico?
+        </mat-slide-toggle>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <ng-container *ngIf="!logisticsForm.get('isFreeDeliveryRadiusEnabled')?.value">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Taxa mínima de entrega (R$)</mat-label>
+              <input matInput type="number" formControlName="minDeliveryFee" />
+            </mat-form-field>
+          </ng-container>
+
+          <ng-container *ngIf="logisticsForm.get('isFreeDeliveryRadiusEnabled')?.value">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Raio de entrega gratuito (Km)</mat-label>
+              <input matInput type="number" formControlName="freeDeliveryRadiusKm" />
+            </mat-form-field>
+          </ng-container>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Valor por Km (R$)</mat-label>
+            <input matInput type="number" formControlName="deliveryFeePerKm" />
+          </mat-form-field>
+ 
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Raio de Entrega (Km)</mat-label>
+            <mat-select formControlName="maxDeliveryRadiusKm" (selectionChange)="updateRadius()">
+              <mat-option *ngFor="let radius of radiusOptions" [value]="radius">{{ radius }} km</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="flex justify-end mb-2">
+          <button mat-stroked-button
+                  color="primary"
+                  (click)="enableCenterSelection()"
+                  [disabled]="selectingCenter">
+            {{ selectingCenter ? 'Clique no mapa...' : 'Selecionar novo centro' }}
+          </button>
+        </div>
+
+        <app-spinner-button type="submit" color="primary" class="mt-4 w-full" [isLoading]="isLoading">
+          Salvar Configuração
+        </app-spinner-button>
+      </form>
+    </mat-card>
+
+    <div class="h-[50vh] w-full" *ngIf="merchant && merchantCenter">
+      <mgl-map 
+        [style]="{
+          version: 8,
+          sources: {
+            'osm-tiles': {
+              type: 'raster',
+              tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+              tileSize: 256
+            }
+          },
+          layers: [{ id: 'osm-tiles-layer', type: 'raster', source: 'osm-tiles' }]
+        }"
+        [zoom]="[13]" 
+        [center]="merchantCenter" 
+        (mapClick)="onMapClick($event)"
+        class="h-full w-full">
+
+        <mgl-marker #markerMerchant [lngLat]="merchantCenter">
+          <img class="marker w-[30px] h-[30px]" src="assets/images/icons/merchant-icon.png" />
+        </mgl-marker>
+  
+        <mgl-popup [marker]="markerMerchant">
+          <strong>Nome:</strong> {{ merchant?.name }} <br/>
+          <strong>CNPJ:</strong> {{ merchant?.document }} <br/>
+          <strong>Endereço:</strong> {{ merchant?.address?.formattedAddress }}<br/>
+        </mgl-popup>
+  
+        <mgl-geojson-source
+          id="delivery-radius-source" 
+          [data]="deliveryRadiusGeoJson" 
+          type="geojson">
+        </mgl-geojson-source>
+  
+        <mgl-layer 
+          id="delivery-radius-fill" 
+          type="fill" 
+          source="delivery-radius-source" 
+          [paint]="{
+            'fill-color': 'rgba(0, 0, 255, 0.3)',
+            'fill-outline-color': 'rgba(0, 0, 255, 0.8)'
+          }">
+        </mgl-layer>
+          
+      </mgl-map>
+    </div>
+  </div>
+</div>

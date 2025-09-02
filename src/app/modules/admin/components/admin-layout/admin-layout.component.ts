@@ -19,6 +19,5 @@ export class AdminLayoutComponent {
     ) {
     this.sideNavService.currentShowNav.subscribe(showNav => this.showNav = showNav);
     this.windowService.isMobile().subscribe(isMobile => this.isMobile = isMobile);
-
   }
 }

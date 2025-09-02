@@ -1,12 +1,12 @@
 <div class="!bg-red-200">
-    <h2 mat-dialog-title>SUCESSO!</h2>
+    <h2 mat-dialog-title>DELETAR!</h2>
     <mat-dialog-content >
         {{data.message}}
     </mat-dialog-content>
     <mat-dialog-actions>
         <div class="flex flex-row w-full">
             <button mat-raised-button class="!w-full" color="accent" (click)="onCancel()">Cancelar</button>
-            <button mat-raised-button class="!w-full !bg-red-900 !text-white" (click)="onConfirm()" >Confirmar</button>
+            <button mat-raised-button color="warn" class="!w-full !text-white" (click)="onConfirm()" >Confirmar</button>
         </div>
     </mat-dialog-actions>
 </div>

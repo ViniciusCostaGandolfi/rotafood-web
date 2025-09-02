@@ -19,6 +19,7 @@ export class SpinnerButtonComponent {
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() color: 'primary'|'accent' = 'primary';
   @Input() class: string = ''; 
+  @Input() disabled: boolean = false
   @Output() click = new EventEmitter<Event>();
 
   handleClick(event: Event) {

@@ -1,0 +1,146 @@
+<div class="overflow-auto">
+    <button class="!w-full" mat-raised-button color="primary" *ngIf="itemOrderChanges.length > 0"
+        (click)="saveAllChanges()">Salvar Ordenação</button>
+
+    <ng-container *ngIf="!isMobile; else mobileView">
+        <table mat-table *ngIf="category.template === 'DEFAULT'" #defaultTable mat-table [dataSource]="category.items"
+            class="w-full max-w-[95vw] overflow-auto">
+            <ng-container matColumnDef="image">
+                <th mat-header-cell *matHeaderCellDef> Imagem </th>
+                <td mat-cell *matCellDef="let item">
+                    <img [src]="item.product.imagePath ? item.product.imagePath : 'assets/images/placeholder.png'"
+                        alt="{{ item.product.name }}" class="w-20 h-20 object-cover rounded">
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Nome </th>
+                <td mat-cell *matCellDef="let item">
+                    <div class="font-semibold min-w-[100px] block">{{ item.product.name }}</div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let item">
+                    <ng-container *ngFor="let cm of item.contextModifiers">
+                        <div *ngIf="cm.catalogContext === catalog">
+                            <mat-slide-toggle (change)="onStatusChange(cm, $event)"
+                                [checked]="cm.status === 'AVAILIABLE'">
+                                {{ cm.status === 'AVAILIABLE' ? 'Ativado' : 'Pausado' }}
+                            </mat-slide-toggle>
+                        </div>
+                    </ng-container>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef> Preço {{catalogContextToString[catalog]}}</th>
+                <td mat-cell *matCellDef="let item">
+                    <ng-container *ngFor="let cm of item.contextModifiers">
+                        <div class="flex h-full pt-5 items-baseline" *ngIf="cm.catalogContext === catalog">
+                            <app-price-input [price]="cm.price.value" [title]="'Preço'"
+                                (valueChange)="onPriceChange(cm, $event)"></app-price-input>
+                        </div>
+                    </ng-container>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Ações </th>
+                <td mat-cell *matCellDef="let item; let j = index; let categoryIndex = index;">
+                    <button mat-icon-button color="primary" (click)="moveItemUp(j)" [disabled]="j === 0">
+                        <mat-icon>arrow_upward</mat-icon>
+                    </button>
+                    <button mat-icon-button color="primary" (click)="moveItemDown(j)"
+                        [disabled]="j === category.items.length - 1">
+                        <mat-icon>arrow_downward</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="updateOrCreateItemDefault({item: item, categoryId: category.id})">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="deleteItem({item: item, categoryId: category.id})"
+                        matTooltip="Deletar item">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="getDisplayedColumns()"></tr>
+            <tr mat-row *matRowDef="let row; columns: getDisplayedColumns()"></tr>
+
+        </table>
+    </ng-container>
+
+
+    <ng-template #mobileView>
+        <div class="p-2 space-y-4">
+          <mat-card *ngFor="let item of category.items; let j = index"
+                    class="border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            
+            <mat-card-header>
+                <mat-card-title-group>
+
+                    <mat-card-title class="!text-lg !font-semibold">
+                      {{ item.product.name }}
+                    </mat-card-title>
+                    <img
+                        mat-card-sm-image
+                      [src]="item.product.imagePath || 'assets/images/placeholder.png'"
+                      [alt]="item.product.name"
+                      class="w-full h-full object-cover !rounded-md" />
+                </mat-card-title-group>
+
+            </mat-card-header>
+      
+            <mat-card-content class="!mt-2 ">
+              <ng-container *ngFor="let cm of item.contextModifiers">
+                <div *ngIf="cm.catalogContext === catalog" class="w-full flex justify-between items-baseline">
+                  <mat-slide-toggle
+                    (change)="onStatusChange(cm, $event)"
+                    [checked]="cm.status === 'AVAILIABLE'">
+                    {{ cm.status === 'AVAILIABLE' ? 'Ativado' : 'Pausado' }}
+                  </mat-slide-toggle>
+                  <app-price-input
+                    [price]="cm.price.value"
+                    [title]="'Preço'"
+                    (valueChange)="onPriceChange(cm, $event)">
+                  </app-price-input>
+                </div>
+              </ng-container>
+      
+              <div class="w-full flex justify-between items-baseline">
+                <button mat-mini-fab
+                        color="primary"
+                        (click)="moveItemUp(j)"
+                        [disabled]="j === 0"
+                        matTooltip="Mover para cima">
+                  <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button mat-mini-fab
+                        color="primary"
+                        (click)="moveItemDown(j)"
+                        [disabled]="j === category.items.length - 1"
+                        matTooltip="Mover para baixo">
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+                <button mat-mini-fab
+                        (click)="updateOrCreateItemDefault({ item, categoryId: category.id })"
+                        matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-mini-fab
+                        (click)="deleteItem({ item, categoryId: category.id })"
+                        matTooltip="Deletar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+      
+          </mat-card>
+        </div>
+      </ng-template>
+      
+      
+      
+</div>

@@ -1,5 +1,5 @@
 
-    <main class="h-full bg-white">
+    <main class="h-full bg-white justify-between flex flex-col">
         <div class="container z-10 flex flex-col items-center justify-between px-6 pt-32 mx-auto md:pt-0">
             <div class="container relative flex flex-col-reverse items-center justify-between px-6 mx-auto lg:flex-row">
                 <div class="w-full  text-center lg:text-left">
@@ -9,10 +9,10 @@
                     
                 </div>
                 <div class="relative block w-full max-w-md mx-auto md:mt-0 lg:max-w-2xl">
-                    <img src="assets/images/not-found-banner.svg"/>
+                    <img alt="Not Found" src="assets/images/not-found-banner.svg"/>
                 </div>
             </div>
-            <button mat-raised-button color="primary" class="!p-5 !text-xl" routerLink="/login">Voltar para o Início</button>
+            <button mat-raised-button color="primary" class="!p-5 !text-xl" (click)="back()">Voltar</button>
         </div>
+        <app-footer></app-footer>
     </main>
-    <app-footer></app-footer>

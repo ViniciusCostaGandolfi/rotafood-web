@@ -1,0 +1,39 @@
+<div mat-dialog-title class="flex justify-between items-center">
+    <h2>Selecione um Produto</h2>
+    <button mat-icon-button (click)="closeDialog()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  
+  <mat-dialog-content class="!max-h-[80vh]">
+    <div *ngIf="!products?.length">
+      <p>Nenhum produto encontrado.</p>
+    </div>
+  
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <mat-card *ngFor="let product of products">
+        <mat-card-header>
+          <mat-card-title>{{ product.name }}</mat-card-title>
+        </mat-card-header>
+        <img 
+          class="!max-h-[15vh] w-auto mx-auto"
+          mat-card-image
+          [src]="product.imagePath"
+          alt="{{ product.name }}"
+        />
+        <mat-card-content>
+          <p>{{ product.description }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="selectProduct(product)">
+            Selecionar
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions>
+    <button mat-button (click)="closeDialog()">Cancelar</button>
+  </mat-dialog-actions>
+  

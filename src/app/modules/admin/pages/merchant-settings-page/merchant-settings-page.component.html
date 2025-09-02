@@ -1,0 +1,161 @@
+<app-default-form-container>
+    <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" class="m-2">
+        <div class="flex flex-col gap-5 sm:flex-row w-full items-center justify-center">
+            <div class="w-80 h-80">
+                <app-image-selector [imagePath]="form.controls.imagePath.value"
+                    (onSelectedImageChange)="onImageChange($event)"></app-image-selector>
+            </div>
+            <div class="w-full flex flex-col mt-5">
+                <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Nome Loja Online</mat-label>
+                    <input class="w-full" matInput type="text" formControlName="onlineName">
+                    <mat-error *ngIf="form.controls.onlineName.hasError('required')">
+                        Coloque o nome online
+                    </mat-error>
+                    <mat-error *ngIf="form.controls.onlineName.hasError('minLength')">
+                        O nome da loja online deve conter 2 dígitos.
+                    </mat-error>
+                    <mat-error *ngIf="form.controls.onlineName.hasError('pattern')">
+                        O nome da loja online não pode conter espaços.
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Descrição</mat-label>
+                    <input class="w-full" matInput type="text" formControlName="description">
+                    <mat-error *ngIf="form.controls.description.hasError('required')">
+                        Voce esqueceu de colocar a descrição do restaurante
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:gap-2 gap-0">
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Nome</mat-label>
+                <input class="w-full" matInput type="text" formControlName="name">
+                <mat-error *ngIf="form.controls.name.hasError('required')">
+                    Voce esqueceu de colocar o nome do restaurante
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full" >
+                <mat-label>Telefone</mat-label>
+                <input class="w-full" matInput (ngModelChange)="onPhoneInputChange($event)"  type="text" formControlName="phone" >
+                <mat-error *ngIf="form.controls.phone.hasError('required')">
+                    Voce esqueceu de colocar o telefone do restaurante
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:gap-2 gap-0">
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Descrição</mat-label>
+                <input class="w-full" matInput type="text" formControlName="description">
+                <mat-error *ngIf="form.controls.description.hasError('required')">
+                    Voce esqueceu de colocar a descrição do restaurante
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:gap-2 gap-0">
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>CPF ou CNPJ</mat-label>
+                <mat-select formControlName="documentType" required>
+                    <mat-option value="CPF">CPF</mat-option>
+                    <mat-option value="CNPJ">CNPJ</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Número do Documento</mat-label>
+                <input class="w-full" matInput type="text" formControlName="document">
+                <mat-error *ngIf="form.controls.document.hasError('required')">
+                    Voce esqueceu de colocar o CPF ou CNPJ
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <app-address-autocomplete [address]="form.controls.address.value" (addressFound)="addressFound($event)"></app-address-autocomplete>
+
+        <div class="flex flex-col gap-4">
+            <div class="text-lg font-semibold mb-4">Disponibilidade</div>
+         
+            <div formArrayName="openingHours"
+                class="flex flex-col gap-4">
+                <div *ngFor="let shift of form.controls['openingHours'].controls; let i = index" [formGroupName]="i"
+                    class="border p-4 rounded shadow">
+                    <div class="flex gap-4">
+                        <mat-form-field class="w-full">
+                            <mat-label>Início</mat-label>
+                            <mat-select formControlName="startTime">
+                                <mat-option *ngFor="let time of timeOptions" [value]="time">{{ time }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="w-full">
+                            <mat-label>Fim</mat-label>
+                            <mat-select formControlName="endTime">
+                                <mat-option *ngFor="let time of timeOptions" [value]="time">{{ time }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="text-md font-semibold mt-4">Dias da Semana</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <mat-checkbox formControlName="monday">Segunda-feira</mat-checkbox>
+                        <mat-checkbox formControlName="tuesday">Terça-feira</mat-checkbox>
+                        <mat-checkbox formControlName="wednesday">Quarta-feira</mat-checkbox>
+                        <mat-checkbox formControlName="thursday">Quinta-feira</mat-checkbox>
+                        <mat-checkbox formControlName="friday">Sexta-feira</mat-checkbox>
+                        <mat-checkbox formControlName="saturday">Sábado</mat-checkbox>
+                        <mat-checkbox formControlName="sunday">Domingo</mat-checkbox>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button mat-icon-button color="warn" (click)="removeShift(i)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <button mat-button color="primary" (click)="addShift()">Adicionar Turno</button>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-5 items-center justify-around" *ngIf="form.controls.onlineName.value">
+
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title>Cardáio Online na Mesa</mat-card-title>
+                    <mat-card-subtitle>rotafood.com.br/cardapios/{{form.controls.onlineName.value}}/mesa</mat-card-subtitle>
+                </mat-card-header>
+                <qrcode #qrcodeMesa mat-card-image
+                    [qrdata]="'https://rotafood.com.br/cardapios/' + form.controls.onlineName.value + '/mesa'"
+                    [width]="400" [errorCorrectionLevel]="'M'"></qrcode>
+                <mat-card-actions>
+                    <button mat-button (click)="saveQRCodeAsImage(qrcodeMesa)">Baixar imagem</button>
+                    <button mat-button>
+                        <a target="_blank" [href]="'cardapios/' + form.controls.onlineName.value + '/mesa'">
+                            Ver como cliente
+                        </a>
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title>Cardáio Online Entrega</mat-card-title>
+                    <mat-card-subtitle>rotafood.com.br/cardapios/{{form.controls.onlineName.value}}/entrega</mat-card-subtitle>
+                </mat-card-header>
+                <qrcode #qrcodeEntrega mat-card-image
+                    [qrdata]="'https://rotafood.com.br/cardapios/' + form.controls.onlineName.value + '/entrega'"
+                    [width]="400" [errorCorrectionLevel]="'M'"></qrcode>
+                <mat-card-actions>
+                    <button mat-button (click)="saveQRCodeAsImage(qrcodeEntrega)">Baixar imagem</button>
+                    <button mat-button>
+                        <a target="_blank" [href]="'cardapios/' + form.controls.onlineName.value + '/entrega'">
+                            Ver como cliente
+                        </a>
+                    </button> </mat-card-actions>
+            </mat-card>
+        </div>
+
+        <button mat-raised-button [disabled]="!form.valid" class="w-full !mt-2" color="primary" (click)="onSubmit()">
+            Salvar </button>
+
+    </form>
+
+</app-default-form-container>

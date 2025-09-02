@@ -1,0 +1,68 @@
+<div class="h-full w-full flex flex-col overflow-hidden">  
+    <div mat-dialog-content class="flex-1 overflow-auto">
+      <div class="flex flex-col justify-center text-center mb-4">
+        <div class="font-bold text-xl text-gray-800 sm:text-2xl">
+          {{ data ? ('Editar Funcionário ' + data.name) : 'Criar Funcionário' }}
+        </div>
+      </div>
+  
+      <form [formGroup]="workerForm" class="h-auto w-full flex flex-col">
+        <mat-form-field class="w-full">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="name" placeholder="Nome do Funcionário" />
+          <mat-error *ngIf="workerForm.get('name')?.invalid">
+            O nome é obrigatório.
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field class="w-full">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="Email do Funcionário" />
+          <mat-error *ngIf="workerForm.get('email')?.invalid">
+            Email inválido ou obrigatório.
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field class="w-full">
+          <mat-label>Telefone</mat-label>
+          <input matInput formControlName="phone" placeholder="Telefone do Funcionário" />
+          <mat-error *ngIf="workerForm.get('phone')?.invalid">
+            O telefone é obrigatório e deve conter apenas dígitos (ajuste conforme regra).
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field class="w-full" *ngIf="!data">
+          <mat-label>Senha</mat-label>
+          <input matInput type="password" formControlName="password" placeholder="Senha do Funcionário" />
+          <mat-error *ngIf="workerForm.get('password')?.invalid">
+            A senha é obrigatória na criação.
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field class="w-full">
+          <mat-label>Função</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="ADMIN">Administrador</mat-option>
+            <mat-option value="GARSON">Garson</mat-option>
+            <mat-option value="CHEF">Chefe de cozinha</mat-option>
+          </mat-select>
+          <mat-error *ngIf="workerForm.get('role')?.invalid">
+            A função é obrigatória.
+          </mat-error>
+        </mat-form-field>
+      </form>
+    </div>
+  
+    <div mat-dialog-actions class="flex-shrink-0">
+      <button mat-button mat-dialog-close>Cancelar</button>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="workerForm.invalid"
+        (click)="onSubmit()"
+      >
+        {{ data ? 'Salvar' : 'Criar' }}
+      </button>
+    </div>
+  </div>
+  

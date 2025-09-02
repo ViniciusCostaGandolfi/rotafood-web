@@ -1,9 +1,8 @@
 import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import createColormap from 'colormap';
-import { Merchant } from '../../../core/interfaces/merchant';
-import { Coordinate, Vrp, VrpRoute } from '../../../core/interfaces/vrp';
+import { FullMerchantDto } from '../../../core/interfaces/merchant/full-merchant';
 import { LngLatLike } from 'maplibre-gl';
-import { getMidCoordinate } from '../../../core/helpers/get-mid-coordinate';
+import { Vrp, VrpRoute } from '../../../core/interfaces/vrp/vrp';
 
 
 @Component({
@@ -18,47 +17,52 @@ export class MapVrpComponent implements OnInit {
   public showMap = false
   public center: LngLatLike = { lat: -46.402459, lng: -21.571489 };
   public colormap: string[] = [];
-  public merchant: Merchant | null = null;
+  public merchant: FullMerchantDto | null = null;
   public selectedRoute: VrpRoute | null = null;
 
 
 
-  @Input() public vrp: Vrp | null = null;
+  @Input() public vrp!: Vrp;
 
   toggleNav() {
     this.showNav = !this.showNav;
   }
 
   ngOnInit(): void {
-    this.updateMap(this.vrp)
+    this.updateMap()
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['vrp'] && !changes['vrp'].isFirstChange()) {
+      this.updateMap();
+    }
   }
 
   onRouteButtonClick(route: VrpRoute) {
-    if (route) {
-      this.selectedRoute = route;
-      this.center = getMidCoordinate(this.selectedRoute.routeLine);
-    }
+    this.selectedRoute = route;
+    this.center = this.selectedRoute.routeLine[Math.ceil(this.selectedRoute.routeLine.length / 2)]
   }
 
-
-  updateMap(vrp: Vrp | null): void {
+  private updateMap(): void {
     this.showMap = false
-    if (vrp) {
-      setTimeout(() => {
-        this.center = {
-          lat: vrp.origin.address.latitude,
-          lng: vrp.origin.address.longitude
-        };
-        this.colormap = createColormap<"hex">({
-          alpha: 1,
-          colormap: "rainbow",
-          nshades: vrp.routes.length > 9 ? vrp.routes.length : 9,
-          format: "hex",
-        });
+
+
+    setTimeout(() => {
+        if (this.vrp !== undefined) {
+          this.center = {
+            lat: this.vrp.origin.address.latitude,
+            lng: this.vrp.origin.address.longitude
+          };
+          this.colormap = createColormap<"hex">({
+            alpha: 1,
+            colormap: "rainbow",
+            nshades: this.vrp.routes.length > 9 ? this.vrp.routes.length + 1 : 9,
+            format: "hex",
+          });
 
         this.showMap = true;
-      }, 100);
-    }
+      }
+    }, 100)
   }
 }
 

@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class ShowAdminSideNavService {
 
-  private showNavSource = new BehaviorSubject<boolean>(false);
+  private readonly showNavSource = new BehaviorSubject<boolean>(false);
   currentShowNav = this.showNavSource.asObservable();
 
   constructor() {}

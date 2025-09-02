@@ -1,0 +1,52 @@
+<mat-card class="mb-2" *ngIf="order">
+    <mat-card-header>
+      <div class="flex w-full justify-between items-center">
+        <div>
+          <div class="text-base font-semibold">
+            Pedido #{{ order.merchantSequence }}
+          </div>
+          <div class="text-sm font-normal flex flex-col text-gray-600">
+            {{ OrderTypeMap[order.type] }}
+          
+            <div *ngIf="order.type === 'DELIVERY'">
+              • {{ order.customer?.name }}  
+              • {{ order.delivery?.address?.formattedAddress }}
+            </div>
+          
+            <div *ngIf="order.type === 'TAKEOUT'">
+              • {{ order.customer?.name }}
+            </div>
+          
+            <div *ngIf="order.type === 'COMMAND' && order.command">
+              • {{ order.command.name }} #{{ order.command.merchantSequence }} - <span *ngIf="order.command.tableIndex">Mesa {{ order.command.tableIndex }}</span>
+            </div>
+          </div>
+          
+        </div>
+        <button mat-icon-button (click)="printOrder(order)">
+            <mat-icon class="cursor-pointer">print</mat-icon>
+        </button>
+      </div>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <ul class="mt-2">
+        <li *ngFor="let item of order.items">
+          ({{ item.quantity }}) {{ item.item.name }}
+          <p *ngIf="item.options?.length" class="text-sm text-gray-400">
+            <span *ngFor="let option of item.options">
+              ({{option.quantity}}) {{ option.option.name }}
+            </span>
+          </p>
+        </li>
+      </ul>
+      <p class="font-bold mt-2">Total: R$ {{ order.total.orderAmount | number:'1.2-2' }}</p>
+    </mat-card-content>
+  
+    <mat-card-actions>
+      <div class="w-full flex justify-between">
+        <ng-content></ng-content>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+  

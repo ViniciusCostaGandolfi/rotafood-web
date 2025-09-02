@@ -1,0 +1,69 @@
+<h1 mat-dialog-title>Copiar Complemento(s)</h1>
+
+<mat-dialog-content class="!max-h-[90vh] p-4 flex flex-col">
+  <mat-tab-group [(selectedIndex)]="selectedTab" class="flex-1">
+    
+    <!-- Aba Itens -->
+    <mat-tab label="Itens">
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let category of categories">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ category.name }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-selection-list [multiple]="false">
+            <mat-list-option
+              *ngFor="let item of category.items"
+              (click)="selectedItem = item"
+              [selected]="selectedItem?.id === item.id"
+            >
+              {{ item.product.name }}
+              <span class="text-sm text-gray-500">
+                ({{ item.optionGroups?.length || 0 }} grupos)
+              </span>
+            </mat-list-option>
+          </mat-selection-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-tab>
+    
+    <mat-tab label="Grupos">
+      <mat-selection-list>
+        <mat-list-option
+          *ngFor="let grp of optionGroups"
+          (click)="selectedGroup = grp"
+          [selected]="selectedGroup?.id === grp.id"
+        >
+          {{ grp.name }}
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-tab>
+
+  </mat-tab-group>
+</mat-dialog-content>
+
+<mat-dialog-actions [align]="'end'" class="!pt-2">
+  <button mat-button mat-dialog-close>Cancelar</button>
+
+  <button
+    *ngIf="selectedTab === 0"
+    mat-raised-button
+    color="primary"
+    [disabled]="!selectedItem"
+    (click)="copyAllFromItem(selectedItem!)"
+  >
+    Copiar grupos do item
+  </button>
+
+  <button
+    *ngIf="selectedTab === 1"
+    mat-raised-button
+    color="primary"
+    [disabled]="!selectedGroup"
+    (click)="copySingleGroup()"
+  >
+    Copiar grupo
+  </button>
+</mat-dialog-actions>

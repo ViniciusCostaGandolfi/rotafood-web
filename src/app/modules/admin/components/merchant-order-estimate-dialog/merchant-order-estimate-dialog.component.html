@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Ajustar Tempo de Espera</h2>
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="estimateForm" class="w-full p-3">
+        <mat-form-field appearance="outline" class="!w-full">
+            <mat-label>Tempo Mínimo para Retirada (min)</mat-label>
+            <input matInput type="number" formControlName="pickupMinMinutes">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="!w-full">
+            <mat-label>Tempo Máximo para Retirada (min)</mat-label>
+            <input matInput type="number" formControlName="pickupMaxMinutes">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="!w-full">
+            <mat-label>Tempo Mínimo para Entrega (min)</mat-label>
+            <input matInput type="number" formControlName="deliveryMinMinutes">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="!w-full">
+            <mat-label>Tempo Máximo para Entrega (min)</mat-label>
+            <input matInput type="number" formControlName="deliveryMaxMinutes">
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <app-spinner-button mat-button color="primary" (click)="onSave()" [disabled]="estimateForm.invalid">Salvar</app-spinner-button>
+</mat-dialog-actions>

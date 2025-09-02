@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class ScrollService {
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {}
   scrollToElementById(id: string) {
     const element = this.__getElementById(id);
     this.scrollToElement(element);

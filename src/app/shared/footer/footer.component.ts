@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -11,5 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './footer.component.scss'
 })
 export class FooterComponent {
+
+  @Input()
+  imagePath: string = 'assets/images/rotafood-logo.png'
 
 }

@@ -1,0 +1,125 @@
+<app-default-layout>
+    <app-default-form-container>
+        <div class="flex flex-col justity-center text-center">
+            <div class=" justify-center font-bol mb-2 text- text-xl text-gray-800 sm:text-2xl ">
+                Crie sua Conta
+            </div>
+            <span class="justify-center text-sm text-center text-gray-500 flex-items-center ">
+                Ja tem uma conta ?
+                <a routerLink="/entrar" class="text-sm text-primary-500 underline hover:text-primary-700">
+                    entrar
+                </a>
+            </span>
+        </div>
+        <mat-vertical-stepper [linear]="true" #stepper>
+            <mat-step [completed]="merchantForm.valid" label="Dados do Restaurante">
+                <form [formGroup]="merchantForm" (keydown.enter)="$event.preventDefault()" class="my-2">
+
+                    <div class="flex flex-col sm:flex-row sm:gap-2 gap-0">
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Nome do Restaurnate</mat-label>
+                            <input class="w-full" matInput type="text" formControlName="name">
+                            <mat-error *ngIf="merchantForm.controls.name.hasError('required')">
+                                Voce esqueceu de colocar o nome do restaurante
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Telefone</mat-label>
+                            <input class="w-full" matInput (ngModelChange)="onPhoneInputChangeMerchant($event)" type="text"
+                                formControlName="phone">
+                            <mat-error *ngIf="merchantForm.controls.phone.hasError('required')">
+                                Voce esqueceu de colocar o telefone do restaurante
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:gap-2 gap-0">
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Descrição</mat-label>
+                            <input class="w-full" matInput type="text" formControlName="description">
+                            <mat-error *ngIf="merchantForm.controls.description.hasError('required')">
+                                Voce esqueceu de colocar a descrição do restaurante
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:gap-2 gap-0">
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>CPF ou CNPJ</mat-label>
+                            <mat-select formControlName="documentType" required>
+                                <mat-option value="CPF">CPF</mat-option>
+                                <mat-option value="CNPJ">CNPJ</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Número do Documento</mat-label>
+                            <input class="w-full" matInput type="text" formControlName="document">
+                            <mat-error *ngIf="merchantForm.controls.document.hasError('required')">
+                                Voce esqueceu de colocar o CPF ou CNPJ
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <app-address-autocomplete (addressFound)="addressFound($event)">
+
+                    </app-address-autocomplete>
+
+                    <button mat-raised-button  class="!w-full" color="primary"
+                        matStepperNext>Próximo</button>
+
+                </form>
+            </mat-step>
+            <mat-step [completed]="userForm.valid" label="Dados do Administrador">
+                <form [formGroup]="userForm"  (keydown.enter)="$event.preventDefault()" class="my-2">
+                    <div class="flex flex-col sm:flex-row sm:gap-2 gap-0">
+                        <mat-form-field appearance="outline" class="w-full" >
+                            <mat-label>Nome</mat-label>
+                            <input class="w-full" matInput  type="text" formControlName="name" >
+                            <mat-error *ngIf="userForm.controls.name.hasError('required')">
+                                Voce esqueceu de colocar um número para contato
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Celular</mat-label>
+                            <input class="w-full" (ngModelChange)="onPhoneInputChangeUser($event)" matInput  type="text" formControlName="phone" >
+                            <mat-error *ngIf="userForm.controls.phone.hasError('required')">
+                                Voce esqueceu de colocar um número para contato
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+            
+                    <div class="flex flex-col sm:flex-row sm:gap-2 gap-0">
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>E-mail</mat-label>
+                            <input class="w-full" matInput  type="email" formControlName="email" >
+                            <mat-error *ngIf="userForm.controls.email.hasError('required')">
+                                Voce esqueceu de colocar um e-mail para contato
+                            </mat-error>
+                            <mat-error *ngIf="userForm.controls.email.hasError('email')">
+                                Coloque um email como seu_nome&#64;exemplo.com
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Senha</mat-label>
+                            <input class="w-full" matInput  type="password" formControlName="password" >
+                            <mat-error *ngIf="userForm.controls.password.hasError('required')">
+                                Voce esqueceu de colocar sua senha!
+                            </mat-error>
+                        </mat-form-field>  
+                        
+                    </div>
+                    <div class="flex flex-col sm:flex-row">
+                        <button mat-raised-button class="!w-full" color="accent" matStepperPrevious>Voltar</button>
+                        <app-spinner-button class="!w-full !text-xl" [isLoading]="isLoading" [type]="'button'"
+                            (click)="onSubmit()">
+                            Criar Conta
+                        </app-spinner-button>
+                    </div>
+                </form>
+            
+                
+            </mat-step>
+
+
+        </mat-vertical-stepper>
+    </app-default-form-container>
+</app-default-layout>

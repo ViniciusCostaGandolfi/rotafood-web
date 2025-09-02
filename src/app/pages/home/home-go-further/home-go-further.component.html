@@ -1,0 +1,32 @@
+<div class="container flex flex-col items-start justify-between h-full max-w-6xl mx-auto">
+    <div>
+        <h2 class="my-5 text-base font-medium tracking-tight text-start text-primary-500 uppercase">Nosso Sistema Completo</h2>
+        <h3 class="max-w-2xl px-5 mt-2 text-3xl font-black leading-tight text-start text-gray-900 sm:mt-0 sm:px-0 sm:text-6xl">
+        Vá mais longe com o RotaFood
+        </h3>
+    </div>
+    <div class="flex flex-col w-full mt-0 lg:flex-row flex-wrap sm:mt-10 lg:mt-20 gap-8">
+      <div
+        *ngFor="let service of rotafoodServices"
+        class="w-full max-w-sm p-6 mx-auto bg-white rounded-lg shadow-md"
+      >
+        <div class="flex items-center justify-center w-16 h-16 mx-auto text-white bg-primary-500 rounded-full">
+          <mat-icon>{{ service.icon }}</mat-icon>
+        </div>
+        <h4 class="mt-4 text-lg font-bold text-center text-gray-800">{{ service.text }}</h4>
+        <p class="mt-2 text-base text-center text-gray-600">
+          {{ service.description }}
+        </p>
+        <a
+          [href]="service.href"
+          class="relative flex mt-4 text-sm font-medium text-primary-500 underline justify-center"
+        >
+          Saiba Mais
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
